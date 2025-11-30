@@ -9,7 +9,28 @@
         <option value="$PROJECT_DIR$/configserver/pom.xml" />
         <option value="$PROJECT_DIR$/eurekaserver/pom.xml" />
         <option value="$PROJECT_DIR$/reactivegateway/pom.xml" />
+        <option value="$PROJECT_DIR$/event_service/pom.xml" />
+        <option value="$PROJECT_DIR$/participantservice/pom.xml" />
+        <option value="$PROJECT_DIR$/messaging-jms/messaging-jms_/pom.xml" />
+        <option value="$PROJECT_DIR$/campaignservice/pom.xml" />
+        <option value="$PROJECT_DIR$/eventservice/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/campaignservice/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/configserver/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/participantservice/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/reactivegateway/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/eurekaserver/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/api_sb/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/eventservice/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/notificationservice/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/userservice/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/analyticsservice/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/backend/api_sb/pom.xml" />
+        <option value="$PROJECT_DIR$/msproducts/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_23" default="true" project-jdk-name="23" project-jdk-type="JavaSDK">

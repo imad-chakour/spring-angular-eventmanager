@@ -7,9 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="msproducts" />
         <module name="eurekaserver" />
+        <module name="messaging-jms" />
         <module name="configserver" />
+        <module name="campaignservice" />
       </profile>
       <profile name="Annotation profile for reactivegateway" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -18,18 +19,50 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
-        <module name="employees" />
         <module name="reactivegateway" />
+        <module name="analyticsservice" />
+        <module name="participant-service" />
+        <module name="event-service" />
+        <module name="notificationservice" />
+      </profile>
+      <profile name="Annotation profile for userservice" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="userservice" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api_sb" target="1.5" />
+      <module name="employees" target="17" />
+      <module name="employees (1)" target="17" />
+      <module name="employees (2)" target="17" />
+      <module name="employees (3)" target="17" />
+      <module name="msproducts" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="analyticsservice" options="-parameters" />
+      <module name="api_sb" options="" />
+      <module name="campaignservice" options="-parameters" />
       <module name="configserver" options="-parameters" />
       <module name="employees" options="-parameters" />
+      <module name="employees (1)" options="-parameters" />
+      <module name="employees (2)" options="-parameters" />
+      <module name="employees (3)" options="-parameters" />
       <module name="eurekaserver" options="-parameters" />
+      <module name="event-service" options="-parameters" />
+      <module name="messaging-jms" options="-parameters" />
       <module name="msproducts" options="-parameters" />
+      <module name="notificationservice" options="-parameters" />
+      <module name="participant-service" options="-parameters" />
       <module name="reactivegateway" options="-parameters" />
+      <module name="userservice" options="-parameters" />
     </option>
   </component>
 </project>

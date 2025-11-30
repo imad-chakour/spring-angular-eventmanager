@@ -2,9 +2,23 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/api_sb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/analyticsservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/api_sb/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/campaignservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/configserver/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/eurekaserver/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/eventservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/notificationservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/participantservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/reactivegateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/userservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/campaignservice/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/configserver/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eurekaserver/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eventservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/messaging-jms/messaging-jms_/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/msproducts/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/participantservice/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/reactivegateway/src/main/java" charset="UTF-8" />
   </component>
 </project>
