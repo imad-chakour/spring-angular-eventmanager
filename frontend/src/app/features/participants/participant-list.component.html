@@ -1,0 +1,28 @@
+<div class="page">
+  <h1>Participants (participantservice :9040)</h1>
+
+  <table class="data-table" *ngIf="participants.length; else empty">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of participants">
+        <td>{{ p.id }}</td>
+        <td>{{ p.email }}</td>
+        <td>{{ p.firstName }} {{ p.lastName }}</td>
+        <td>{{ p.status }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #empty>
+    <p>No participants found.</p>
+  </ng-template>
+</div>
+
+

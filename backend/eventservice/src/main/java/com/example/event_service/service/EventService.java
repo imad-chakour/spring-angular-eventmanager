@@ -1,5 +1,7 @@
 package com.example.event_service.service;
 
+import com.example.event_service.client.ParticipantClient;
+import com.example.event_service.client.UserClient;
 import com.example.event_service.model.Event;
 import com.example.event_service.model.EventStatus;
 import com.example.event_service.model.Registration;
@@ -10,6 +12,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +25,12 @@ public class EventService {
 
     @Autowired
     private RegistrationRepository registrationRepository;
+
+    @Autowired
+    private UserClient userClient;
+
+    @Autowired
+    private ParticipantClient participantClient;
 
     public Optional<Event> getEvent(final Long id) {
         return eventRepository.findById(id);
@@ -51,6 +60,13 @@ public class EventService {
         if (event.getId() == null) {
             event.setEventId("EVT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
             event.setCreatedAt(LocalDateTime.now());
+        }
+        // Validate organizer through User Service
+        if (event.getOrganizerId() != null) {
+            Map<String, Object> organizer = userClient.getUserById(event.getOrganizerId());
+            if (organizer == null || organizer.isEmpty()) {
+                throw new RuntimeException("Organizer not found with id " + event.getOrganizerId());
+            }
         }
         event.setUpdatedAt(LocalDateTime.now());
         return eventRepository.save(event);
@@ -92,6 +108,16 @@ public class EventService {
                 .ifPresent(reg -> {
                     throw new RuntimeException("Participant already registered for this event");
                 });
+
+        // Validate event exists in current service
+        eventRepository.findById(eventId).orElseThrow(() ->
+                new RuntimeException("Event not found with id " + eventId));
+
+        // Validate participant through Participant Service
+        Map<String, Object> participant = participantClient.getParticipantById(participantId);
+        if (participant == null || participant.isEmpty()) {
+            throw new RuntimeException("Participant not found with id " + participantId);
+        }
 
         Registration registration = new Registration();
         registration.setEventId(eventId);

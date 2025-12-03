@@ -1,5 +1,5 @@
 package com.example.userservice.model;
-// User.java
+
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -48,6 +48,13 @@ public class User {
         this.status = UserStatus.ACTIVE;
     }
 
-    public User(long l, String mail, String admin, String user, String admin1, UserRole userRole, UserStatus userStatus, Object o, Object o1, Object o2) {
+    public User(Long id, String email, String firstName, String lastName, UserRole role, UserStatus status) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.status = status;
+        this.createdAt = LocalDateTime.now();
     }
 }

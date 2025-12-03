@@ -1,0 +1,30 @@
+<div class="page">
+  <h1>Analytics (analyticsservice :9010)</h1>
+
+  <table class="data-table" *ngIf="metrics.length; else empty">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Event</th>
+        <th>Total Registrations</th>
+        <th>Attendance</th>
+        <th>Attendance Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of metrics">
+        <td>{{ m.id }}</td>
+        <td>{{ m.eventId }}</td>
+        <td>{{ m.totalRegistrations }}</td>
+        <td>{{ m.actualAttendance }}</td>
+        <td>{{ m.attendanceRate }}%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #empty>
+    <p>No metrics found.</p>
+  </ng-template>
+</div>
+
+

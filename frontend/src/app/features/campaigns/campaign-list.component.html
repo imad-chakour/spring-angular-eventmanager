@@ -1,0 +1,30 @@
+<div class="page">
+  <h1>Campaigns (campaignservice :9020)</h1>
+
+  <table class="data-table" *ngIf="campaigns.length; else empty">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ref</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Organizer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of campaigns">
+        <td>{{ c.id }}</td>
+        <td>{{ c.reference }}</td>
+        <td>{{ c.name }}</td>
+        <td>{{ c.status }}</td>
+        <td>{{ c.organizerId }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #empty>
+    <p>No campaigns found.</p>
+  </ng-template>
+</div>
+
+

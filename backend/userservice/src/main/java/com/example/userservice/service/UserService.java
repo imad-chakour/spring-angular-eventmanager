@@ -5,7 +5,9 @@ import com.example.userservice.model.UserStatus;
 import com.example.userservice.repository.UserRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -15,6 +17,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Optional<User> getUser(final Long id) {
         return userRepository.findById(id);
@@ -35,6 +40,12 @@ public class UserService {
     public User saveUser(User user) {
         if (user.getId() == null) {
             user.setCreatedAt(LocalDateTime.now());
+            if (user.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+        } else if (user.getPassword() != null) {
+            // re-encode password if it has been changed
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         user.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(user);

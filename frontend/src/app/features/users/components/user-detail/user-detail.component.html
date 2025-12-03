@@ -1,0 +1,56 @@
+<div class="container mt-4">
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading user details...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!isLoading && user" class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h3>User Details</h3>
+      <div>
+        <button class="btn btn-outline-primary me-2" (click)="onEdit()">
+          <i class="bi bi-pencil me-2"></i>Edit
+        </button>
+        <button class="btn btn-outline-secondary" (click)="onBack()">
+          <i class="bi bi-arrow-left me-2"></i>Back to List
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <h5 class="text-muted">Personal Information</h5>
+            <hr>
+            <p><strong>Name:</strong> {{ user.firstName }} {{ user.lastName }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <h5 class="text-muted">Account Information</h5>
+            <hr>
+            <p><strong>Role:</strong> 
+              <span class="badge bg-info text-dark">{{ user.role | titlecase | replace: '_': ' ' }}</span>
+            </p>
+            <p><strong>Status:</strong> 
+              <span [ngClass]="getStatusClass(user.status)">
+                {{ user.status | titlecase }}
+              </span>
+            </p>
+            <p><strong>Member since:</strong> {{ user.createdAt | date:'mediumDate' }}</p>
+            <p *ngIf="user.lastLogin">
+              <strong>Last login:</strong> {{ user.lastLogin | date:'medium' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

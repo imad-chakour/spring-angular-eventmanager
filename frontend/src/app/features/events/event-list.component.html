@@ -1,0 +1,30 @@
+<div class="page">
+  <h1>Events (eventservice :9030)</h1>
+
+  <table class="data-table" *ngIf="events.length; else empty">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Code</th>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Organizer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let e of events">
+        <td>{{ e.id }}</td>
+        <td>{{ e.eventId }}</td>
+        <td>{{ e.title }}</td>
+        <td>{{ e.status }}</td>
+        <td>{{ e.organizerId }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #empty>
+    <p>No events found.</p>
+  </ng-template>
+</div>
+
+

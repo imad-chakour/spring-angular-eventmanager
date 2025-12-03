@@ -1,0 +1,63 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>User Management</h2>
+    <button class="btn btn-primary" routerLink="/users/new">
+      <i class="bi bi-plus-circle me-2"></i>Add New User
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center my-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading users...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!isLoading && !error" class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Last Login</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>{{ user.firstName }} {{ user.lastName }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span class="badge bg-info text-dark">{{ user.role | titlecase }}</span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(user.status)">
+                  {{ user.status | titlecase }}
+                </span>
+              </td>
+              <td>{{ user.lastLogin | date:'medium' }}</td>
+              <td>
+                <div class="btn-group btn-group-sm">
+                  <a [routerLink]="['/users', user.id]" class="btn btn-outline-primary">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  <a [routerLink]="['/users', user.id, 'edit']" class="btn btn-outline-secondary">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
