@@ -1,5 +1,6 @@
 package com.example.campaignservice.sevice;
 
+import com.example.campaignservice.client.UserClient;
 import com.example.campaignservice.model.Campaign;
 import com.example.campaignservice.model.CampaignStatus;
 import com.example.campaignservice.repositoy.CampaignRepository;
@@ -7,6 +8,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +18,9 @@ public class CampaignService {
 
     @Autowired
     private CampaignRepository campaignRepository;
+
+    @Autowired
+    private UserClient userClient;
 
     public Optional<Campaign> getCampaign(final Long id) {
         return campaignRepository.findById(id);
@@ -45,6 +50,13 @@ public class CampaignService {
         if (campaign.getId() == null) {
             campaign.setReference("CAMP-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
             campaign.setCreatedAt(LocalDateTime.now());
+        }
+        // Validate organizer through User Service
+        if (campaign.getOrganizerId() != null) {
+            Map<String, Object> organizer = userClient.getUserById(campaign.getOrganizerId());
+            if (organizer == null || organizer.isEmpty()) {
+                throw new RuntimeException("Organizer not found with id " + campaign.getOrganizerId());
+            }
         }
         campaign.setUpdatedAt(LocalDateTime.now());
         return campaignRepository.save(campaign);

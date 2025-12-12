@@ -3,8 +3,6 @@ package com.example.analyticsservice.controller;
 import com.example.analyticsservice.model.CampaignMetrics;
 import com.example.analyticsservice.model.EventMetrics;
 import com.example.analyticsservice.service.AnalyticsService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +22,8 @@ public class AnalyticsController {
     }
 
     // Campaign Metrics endpoints
-    @Retry(name = "campaignMetricsRetry", fallbackMethod = "fallbackCampaignMetricsCB")
-    @CircuitBreaker(name = "campaignMetricsCB", fallbackMethod = "fallbackCampaignMetricsCB")
     @GetMapping("/campaigns")
     public Iterable<CampaignMetrics> getCampaignMetrics() {
-        simulateRandomFailure();
         return analyticsService.getCampaignMetrics();
     }
 
@@ -43,11 +38,8 @@ public class AnalyticsController {
     }
 
     // Event Metrics endpoints
-    @Retry(name = "eventMetricsRetry", fallbackMethod = "fallbackEventMetricsCB")
-    @CircuitBreaker(name = "eventMetricsCB", fallbackMethod = "fallbackEventMetricsCB")
     @GetMapping("/events")
     public Iterable<EventMetrics> getEventMetrics() {
-        simulateRandomFailure();
         return analyticsService.getEventMetrics();
     }
 
@@ -61,24 +53,4 @@ public class AnalyticsController {
         return analyticsService.saveEventMetrics(metrics);
     }
 
-    private void simulateRandomFailure() {
-        if (Math.random() < 0.3) {
-            throw new RuntimeException("Simulated random failure in Analytics Service");
-        }
-    }
-
-    public Iterable<CampaignMetrics> fallbackCampaignMetricsCB(Exception e) {
-        System.err.println("Analytics Service Fallback (Campaign): " + e.getMessage());
-        return List.of(
-                new CampaignMetrics(1L, 1L, "CAMP-FALLBACK", 100, 90, 80, 50, 10,
-                        5.0, 80.0, 55.6, 11.1, LocalDateTime.now())
-        );
-    }
-
-    public Iterable<EventMetrics> fallbackEventMetricsCB(Exception e) {
-        System.err.println("Analytics Service Fallback (Event): " + e.getMessage());
-        return List.of(
-                new EventMetrics(1L, 1L, 100, 80, 70, 70.0, 20.0, 4.5, LocalDateTime.now())
-        );
-    }
 }

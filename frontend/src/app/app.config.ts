@@ -11,6 +11,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    // Enable fetch API for better SSR performance and compatibility
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor])
+    ),
   ],
 };

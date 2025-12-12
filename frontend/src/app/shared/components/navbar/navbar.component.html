@@ -1,0 +1,49 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <a routerLink="/campaigns" routerLinkActive="active">
+        <span class="brand-text">EventFlow</span>
+      </a>
+    </div>
+
+    @if (isAuthenticated()) {
+      <div class="navbar-menu">
+        <a routerLink="/campaigns" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+          Campagnes
+        </a>
+        <a routerLink="/events" routerLinkActive="active">
+          Événements
+        </a>
+        <a routerLink="/participants" routerLinkActive="active">
+          Participants
+        </a>
+        <a routerLink="/analytics" routerLinkActive="active">
+          Analytics
+        </a>
+        <a routerLink="/notifications" routerLinkActive="active">
+          Notifications
+        </a>
+        @if (isAdmin()) {
+          <a routerLink="/users" routerLinkActive="active">
+            Utilisateurs
+          </a>
+        }
+      </div>
+
+      <div class="navbar-user">
+        <div class="user-info">
+          <span class="user-email">{{ currentUser()?.email }}</span>
+          <span class="user-role">{{ currentUser()?.role }}</span>
+        </div>
+        <button class="btn-logout" (click)="logout()">
+          Déconnexion
+        </button>
+      </div>
+    } @else {
+      <div class="navbar-auth">
+        <a routerLink="/login" class="btn-login">Connexion</a>
+        <a routerLink="/register" class="btn-register">Inscription</a>
+      </div>
+    }
+  </div>
+</nav>

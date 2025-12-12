@@ -1,112 +1,153 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { User, UserRole, UserStatus } from '../../models/user.model';
-import { UserService } from '../../services/user.service';
-import {ReplacePipe} from '../../../../shared/pipes/replace.pipe';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { UserService } from '../../../../core/services/user.service';
+import { User, UserRole, UserStatus } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, ReplacePipe, ReplacePipe],
-  templateUrl: './user-form.component.html'
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './user-form.component.html',
+  styleUrl: './user-form.component.css'
 })
 export class UserFormComponent implements OnInit {
-  userForm: FormGroup;
-  isEditMode = false;
-  userId: number | null = null;
-  isLoading = false;
-  error: string | null = null;
-  roles = Object.values(UserRole);
-  statuses = Object.values(UserStatus);
+  private userService = inject(UserService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
 
-  constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {
+  userForm: FormGroup;
+  isEditMode = signal<boolean>(false);
+  userId = signal<number | null>(null);
+  isLoading = signal<boolean>(false);
+  errorMessage = signal<string | null>(null);
+
+  readonly userRoles = Object.values(UserRole);
+  readonly userStatuses = Object.values(UserStatus);
+
+  constructor() {
     this.userForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
+      firstName: [''],
+      lastName: [''],
       role: [UserRole.PARTICIPANT, Validators.required],
       status: [UserStatus.ACTIVE, Validators.required],
-      password: ['', [Validators.minLength(6)]]
-    });
+      // Marketing fields
+      phone: [''],
+      company: [''],
+      jobTitle: [''],
+      optInMarketing: [true],
+      password: [''],
+      confirmPassword: ['']
+    }, { validators: this.passwordMatchValidator });
   }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.isEditMode = true;
-        this.userId = +id;
-        this.loadUser(this.userId);
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.isEditMode.set(true);
+      this.userId.set(+id);
+      this.loadUser(+id);
+      // En mode édition, le mot de passe n'est pas requis
+      this.userForm.get('password')?.clearValidators();
+      this.userForm.get('confirmPassword')?.clearValidators();
+    } else {
+      // En mode création, le mot de passe est requis
+      this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+      this.userForm.get('confirmPassword')?.setValidators([Validators.required]);
+    }
+  }
+
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    
+    if (password && confirmPassword && password.value && confirmPassword.value) {
+      if (password.value !== confirmPassword.value) {
+        confirmPassword.setErrors({ passwordMismatch: true });
+        return { passwordMismatch: true };
       }
-    });
+    }
+    return null;
   }
 
   loadUser(id: number): void {
-    this.isLoading = true;
-    this.userService.getUser(id).subscribe({
+    this.isLoading.set(true);
+    this.userService.getUserById(id).subscribe({
       next: (user) => {
         this.userForm.patchValue({
-          firstName: user.firstName,
-          lastName: user.lastName,
           email: user.email,
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
           role: user.role,
-          status: user.status
+          status: user.status || UserStatus.ACTIVE,
+          phone: user.phone || '',
+          company: user.company || '',
+          jobTitle: user.jobTitle || '',
+          optInMarketing: user.optInMarketing !== undefined ? user.optInMarketing : true
         });
-        this.userForm.get('password')?.clearValidators();
-        this.userForm.get('password')?.updateValueAndValidity();
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
-      error: (err) => {
-        this.error = 'Failed to load user data';
-        this.isLoading = false;
-        console.error('Error loading user:', err);
+      error: (error) => {
+        this.errorMessage.set('Erreur lors du chargement de l\'utilisateur');
+        this.isLoading.set(false);
+        console.error('Error loading user:', error);
       }
     });
   }
 
   onSubmit(): void {
-    if (this.userForm.invalid) {
-      return;
-    }
+    if (this.userForm.valid) {
+      this.isLoading.set(true);
+      this.errorMessage.set(null);
 
-    this.isLoading = true;
-    const userData = { ...this.userForm.value };
+      const formValue = this.userForm.value;
+      const userData: User = {
+        email: formValue.email.trim(),
+        firstName: formValue.firstName?.trim() || undefined,
+        lastName: formValue.lastName?.trim() || undefined,
+        role: formValue.role,
+        status: formValue.status,
+        // Marketing fields
+        phone: formValue.phone?.trim() || undefined,
+        company: formValue.company?.trim() || undefined,
+        jobTitle: formValue.jobTitle?.trim() || undefined,
+        optInMarketing: formValue.optInMarketing !== undefined ? formValue.optInMarketing : true
+      };
 
-    // Remove password if it's empty (for updates)
-    if (!userData.password) {
-      delete userData.password;
-    }
-
-    const request = this.isEditMode && this.userId
-      ? this.userService.updateUser(this.userId, userData)
-      : this.userService.createUser(userData);
-
-    request.subscribe({
-      next: () => {
-        this.router.navigate(['/users']);
-      },
-      error: (err) => {
-        this.error = this.isEditMode
-          ? 'Failed to update user. Please try again.'
-          : 'Failed to create user. Please try again.';
-        this.isLoading = false;
-        console.error('Error saving user:', err);
+      // Ajouter le mot de passe seulement s'il est fourni
+      if (formValue.password && formValue.password.trim()) {
+        userData.password = formValue.password;
       }
+
+      const operation = this.isEditMode() && this.userId()
+        ? this.userService.updateUser(this.userId()!, userData)
+        : this.userService.createUser(userData);
+
+      operation.subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.router.navigate(['/users']);
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(
+            error.error?.error || 'Erreur lors de la sauvegarde de l\'utilisateur'
+          );
+          console.error('Error saving user:', error);
+        }
+      });
+    } else {
+      this.markFormGroupTouched(this.userForm);
+    }
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
     });
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/users']);
-  }
-
-  get f() {
-    return this.userForm.controls;
   }
 }

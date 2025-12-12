@@ -8,16 +8,16 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class CustomGatewayFilter implements GatewayFilter {
+
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain)
-    {
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        System.out.println("CustomGatewayFilter: Processing request");
 
-        System.out.println(" Logique avant d'appeler le prochain filtre appliquée avec succés");
+        // Add custom request header
+        exchange.getRequest().mutate()
+                .header("X-Gateway-Processed", "true")
+                .build();
 
-        return chain.filter(exchange)
-                .then(Mono.fromRunnable(() -> {
-                    System.out.println("CustomGatewayFilter : traitement après la requête");
-                }));
+        return chain.filter(exchange);
     }
 }
-

@@ -4,19 +4,31 @@ import { EventListComponent } from './features/events/event-list.component';
 import { CampaignListComponent } from './features/campaigns/campaign-list.component';
 import { ParticipantListComponent } from './features/participants/participant-list.component';
 import { AnalyticsOverviewComponent } from './features/analytics/analytics-overview.component';
-import { authGuard } from './core/auth.guard';
+import { NotificationListComponent } from './features/notifications/notification-list.component';
+import { LoginComponent } from './features/users/components/login/login.component';
+import { RegisterComponent } from './features/users/components/register/register.component';
+import { UserListComponent } from './features/users/components/user-list/user-list.component';
+import { UserFormComponent } from './features/users/components/user-form/user-form.component';
+import { authGuard, adminGuard } from './core/auth.guard';
 
 export const routes: Routes = [
-  {
-    path: 'users',
-    loadChildren: () => import('./features/users/users.module').then(m => m.UsersModule),
-    canActivate: [authGuard] // Add auth guard if needed
-  },
-  { path: 'events', component: EventListComponent},
-  { path: 'campaigns', component: CampaignListComponent},
-  { path: 'participants', component: ParticipantListComponent},
-  { path: 'analytics', component: AnalyticsOverviewComponent},
+  // Routes publiques
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+
+  // Routes protégées
+  { path: 'events', component: EventListComponent, canActivate: [authGuard] },
+  { path: 'campaigns', component: CampaignListComponent, canActivate: [authGuard] },
+  { path: 'participants', component: ParticipantListComponent, canActivate: [authGuard] },
+  { path: 'analytics', component: AnalyticsOverviewComponent, canActivate: [authGuard] },
+  { path: 'notifications', component: NotificationListComponent, canActivate: [authGuard] },
+
+  // Routes gestion utilisateurs (admin uniquement)
+  { path: 'users', component: UserListComponent, canActivate: [adminGuard] },
+  { path: 'users/new', component: UserFormComponent, canActivate: [adminGuard] },
+  { path: 'users/:id/edit', component: UserFormComponent, canActivate: [adminGuard] },
+
+  // Routes par défaut
   { path: '', pathMatch: 'full', redirectTo: 'campaigns' },
   { path: '**', redirectTo: 'campaigns', pathMatch: 'full' },
 ];
-

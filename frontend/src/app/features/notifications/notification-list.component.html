@@ -1,0 +1,96 @@
+<div class="notification-list-container">
+  <div class="header">
+    <h1>Gestion des Notifications</h1>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="triggerBatchProcessing()">
+        <span>⚙️ Traitement par lots</span>
+      </button>
+      <button class="btn btn-primary" routerLink="/notifications/new">
+        <span>+ Nouvelle Notification</span>
+      </button>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="filters">
+    <select
+      [(ngModel)]="selectedStatus"
+      (change)="onStatusFilterChange()"
+      class="status-filter"
+    >
+      @for (option of statusOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading">
+      <p>Chargement des notifications...</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="notifications-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Destinataire</th>
+            <th>Type</th>
+            <th>Canal</th>
+            <th>Sujet</th>
+            <th>Statut</th>
+            <th>Date d'envoi</th>
+            <th>Statut de livraison</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (notifications().length === 0) {
+            <tr>
+              <td colspan="9" class="empty-state">
+                Aucune notification trouvée
+              </td>
+            </tr>
+          } @else {
+            @for (notification of notifications(); track notification.id) {
+              <tr>
+                <td>{{ notification.id }}</td>
+                <td>{{ notification.recipientEmail || 'ID: ' + notification.recipientId }}</td>
+                <td>{{ notification.type }}</td>
+                <td>{{ notification.channel }}</td>
+                <td>{{ notification.subject || '-' }}</td>
+                <td>
+                  <span [class]="'badge ' + getStatusBadgeClass(notification.status)">
+                    {{ notification.status || 'PENDING' }}
+                  </span>
+                </td>
+                <td>
+                  @if (notification.sentDate) {
+                    {{ notification.sentDate | date:'short' }}
+                  } @else {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+                <td>{{ notification.deliveryStatus || '-' }}</td>
+                <td class="actions">
+                  <button
+                    class="btn-icon btn-delete"
+                    (click)="deleteNotification(notification.id, notification.subject || 'Notification')"
+                    title="Supprimer"
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

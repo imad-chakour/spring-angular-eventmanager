@@ -1,30 +1,86 @@
-<div class="page">
-  <h1>Events (eventservice :9030)</h1>
+<div class="event-list-container">
+  <div class="header">
+    <h1>Gestion des Événements</h1>
+    <button class="btn btn-primary" routerLink="/events/new">
+      <span>+ Nouvel Événement</span>
+    </button>
+  </div>
 
-  <table class="data-table" *ngIf="events.length; else empty">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Code</th>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Organizer</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let e of events">
-        <td>{{ e.id }}</td>
-        <td>{{ e.eventId }}</td>
-        <td>{{ e.title }}</td>
-        <td>{{ e.status }}</td>
-        <td>{{ e.organizerId }}</td>
-      </tr>
-    </tbody>
-  </table>
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      {{ errorMessage() }}
+    </div>
+  }
 
-  <ng-template #empty>
-    <p>No events found.</p>
-  </ng-template>
+  @if (isLoading()) {
+    <div class="loading">
+      <p>Chargement des événements...</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="events-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Titre</th>
+            <th>Type</th>
+            <th>Format</th>
+            <th>Date début</th>
+            <th>Date fin</th>
+            <th>Lieu</th>
+            <th>Capacité</th>
+            <th>Participants</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (events().length === 0) {
+            <tr>
+              <td colspan="12" class="empty-state">
+                Aucun événement trouvé
+              </td>
+            </tr>
+          } @else {
+            @for (event of events(); track event.id) {
+              <tr>
+                <td>{{ event.id }}</td>
+                <td>{{ event.eventId }}</td>
+                <td>{{ event.title }}</td>
+                <td>{{ event.type }}</td>
+                <td>{{ event.format || '-' }}</td>
+                <td>{{ event.startDate | date:'short' }}</td>
+                <td>{{ event.endDate | date:'short' }}</td>
+                <td>{{ event.location || '-' }}</td>
+                <td>{{ event.maxCapacity || '-' }}</td>
+                <td>{{ event.currentParticipants || 0 }} / {{ event.maxCapacity || '∞' }}</td>
+                <td>
+                  <span [class]="'badge ' + getStatusBadgeClass(event.status)">
+                    {{ event.status || 'PLANIFIED' }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button
+                    class="btn-icon btn-edit"
+                    [routerLink]="['/events', event.id, 'edit']"
+                    title="Modifier"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    class="btn-icon btn-delete"
+                    (click)="deleteEvent(event.id, event.title)"
+                    title="Supprimer"
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>
-
-

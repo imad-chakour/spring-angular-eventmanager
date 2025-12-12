@@ -3,6 +3,8 @@ package com.example.userservice.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -33,6 +35,32 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private UserStatus status;
+
+    // Marketing fields (previously in Participant)
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "company")
+    private String company;
+
+    @Column(name = "job_title")
+    private String jobTitle;
+
+    @ElementCollection
+    @CollectionTable(name = "user_segments", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "segment_name")
+    private List<String> segments = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "user_preferences", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "preference_value")
+    private List<String> communicationPreferences = new ArrayList<>();
+
+    @Column(name = "opt_in_marketing")
+    private Boolean optInMarketing = true;
+
+    @Column(name = "last_activity")
+    private LocalDateTime lastActivity;
 
     @Column(name = "last_login")
     private LocalDateTime lastLogin;

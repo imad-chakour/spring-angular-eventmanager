@@ -7,11 +7,19 @@ import com.example.notificationservice.model.NotificationType;
 import com.example.notificationservice.service.NotificationService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -19,6 +27,13 @@ public class NotificationController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private JobLauncher jobLauncher;
+
+    @Autowired
+    @Qualifier("processNotificationJob")
+    private Job processNotificationJob;
 
     @GetMapping("/")
     public String home() {
@@ -75,6 +90,31 @@ public class NotificationController {
     @DeleteMapping("/{id}")
     public void deleteNotification(@PathVariable("id") final Long id) {
         notificationService.deleteNotification(id);
+    }
+
+    /**
+     * Endpoint pour déclencher le job Spring Batch de traitement des notifications
+     * POST /api/notifications/batch/process
+     */
+    @PostMapping("/batch/process")
+    public ResponseEntity<Map<String, String>> triggerBatchProcessing() {
+        try {
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+
+            jobLauncher.run(processNotificationJob, jobParameters);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Batch job 'processNotificationJob' has been triggered successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", "Failed to trigger batch job: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 
     private void simulateRandomFailure() {

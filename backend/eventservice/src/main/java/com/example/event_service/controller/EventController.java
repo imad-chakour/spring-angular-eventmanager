@@ -87,16 +87,16 @@ public class EventController {
         return eventService.getRegistrationsByEvent(eventId);
     }
 
-    @GetMapping("/registrations/participant/{participantId}")
-    public Iterable<Registration> getRegistrationsByParticipant(@PathVariable("participantId") final Long participantId) {
-        return eventService.getRegistrationsByParticipant(participantId);
+    @GetMapping("/registrations/user/{userId}")
+    public Iterable<Registration> getRegistrationsByUser(@PathVariable("userId") final Long userId) {
+        return eventService.getRegistrationsByUser(userId);
     }
 
-    @PostMapping("/registrations/event/{eventId}/participant/{participantId}")
-    public Registration registerParticipant(
+    @PostMapping("/registrations/event/{eventId}/user/{userId}")
+    public Registration registerUser(
             @PathVariable("eventId") final Long eventId,
-            @PathVariable("participantId") final Long participantId) {
-        return eventService.registerParticipant(eventId, participantId);
+            @PathVariable("userId") final Long userId) {
+        return eventService.registerUser(eventId, userId);
     }
 
     @DeleteMapping("/registrations/{id}")

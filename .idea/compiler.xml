@@ -21,7 +21,6 @@
         </processorPath>
         <module name="reactivegateway" />
         <module name="analyticsservice" />
-        <module name="participant-service" />
         <module name="event-service" />
         <module name="notificationservice" />
         <module name="userservice" />
@@ -34,6 +33,7 @@
       <module name="employees (2)" target="17" />
       <module name="employees (3)" target="17" />
       <module name="msproducts" target="17" />
+      <module name="participant-service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

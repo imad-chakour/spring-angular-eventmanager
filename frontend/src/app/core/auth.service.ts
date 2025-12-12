@@ -1,10 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-
-interface LoginResponse {
-  token: string;
-}
+import { Observable, tap, catchError, of } from 'rxjs';
+import { LoginRequest, LoginResponse, RegisterRequest, User } from './models/user.model';
+import { getApiUrl } from './config/api.config';
 
 @Injectable({
   providedIn: 'root',
@@ -12,34 +11,40 @@ interface LoginResponse {
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-
+  private readonly apiUrl = getApiUrl('/api/users');
   private readonly tokenKey = 'auth_token';
+  private readonly userKey = 'current_user';
+
   readonly isAuthenticated = signal<boolean>(!!this.getToken());
+  readonly currentUser = signal<User | null>(this.getCurrentUser());
 
-  login(email: string, password: string) {
-    return this.http
-      .post<LoginResponse>('http://localhost:7020/api/users/login', { email, password })
-      .subscribe({
-        next: (res) => {
-          this.setToken(res.token);
-          this.isAuthenticated.set(true);
-          this.router.navigate(['/users']);
-        },
-        error: () => {
-          this.isAuthenticated.set(false);
-        },
-      });
+  login(credentials: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
+      tap((response) => {
+        this.setToken(response.token);
+        this.isAuthenticated.set(true);
+        // Récupérer les informations utilisateur
+        this.loadUserInfo(response.email);
+        this.router.navigate(['/campaigns']);
+      }),
+      catchError((error) => {
+        this.isAuthenticated.set(false);
+        throw error;
+      })
+    );
   }
 
-  register(data: { email: string; password: string; firstName?: string; lastName?: string }) {
-    return this.http.post('http://localhost:7020/api/users/register', data);
+  register(data: RegisterRequest): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register`, data);
   }
 
-  logout() {
+  logout(): void {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       localStorage.removeItem(this.tokenKey);
+      localStorage.removeItem(this.userKey);
     }
     this.isAuthenticated.set(false);
+    this.currentUser.set(null);
     this.router.navigate(['/login']);
   }
 
@@ -50,11 +55,46 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  private setToken(token: string) {
+  getCurrentUser(): User | null {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return null;
+    }
+    const userStr = localStorage.getItem(this.userKey);
+    return userStr ? JSON.parse(userStr) : null;
+  }
+
+  private setToken(token: string): void {
     if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
       return;
     }
     localStorage.setItem(this.tokenKey, token);
+  }
+
+  private loadUserInfo(email: string): void {
+    this.http.get<User>(`${this.apiUrl}/email/${email}`).subscribe({
+      next: (user) => {
+        this.currentUser.set(user);
+        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+          localStorage.setItem(this.userKey, JSON.stringify(user));
+        }
+      },
+      error: (err) => {
+        console.error('Error loading user info:', err);
+      }
+    });
+  }
+
+  hasRole(role: string): boolean {
+    const user = this.currentUser();
+    return user?.role === role;
+  }
+
+  isAdmin(): boolean {
+    return this.hasRole('ADMIN');
+  }
+
+  isMarketingManager(): boolean {
+    return this.hasRole('MARKETING_MANAGER');
   }
 }
 

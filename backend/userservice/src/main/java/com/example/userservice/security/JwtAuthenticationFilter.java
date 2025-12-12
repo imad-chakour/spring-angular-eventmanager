@@ -26,10 +26,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    // Endpoints publics qui ne nécessitent pas de token JWT
+    private static final String[] PUBLIC_ENDPOINTS = {
+            "/api/users/login",
+            "/api/users/register",
+            "/actuator"
+    };
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
+        String requestPath = request.getRequestURI();
+
+        // Ignorer les endpoints publics - laisser Spring Security les gérer
+        if (isPublicEndpoint(requestPath)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String bearerToken = request.getHeader("Authorization");
         String token = null;
@@ -49,6 +64,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * Vérifie si l'endpoint est public (ne nécessite pas d'authentification)
+     */
+    private boolean isPublicEndpoint(String path) {
+        for (String publicPath : PUBLIC_ENDPOINTS) {
+            if (path.startsWith(publicPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

@@ -1,63 +1,98 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>User Management</h2>
-    <button class="btn btn-primary" routerLink="/users/new">
-      <i class="bi bi-plus-circle me-2"></i>Add New User
-    </button>
+<div class="user-list-container">
+  <div class="header">
+    <h1>Gestion des Utilisateurs</h1>
+    @if (canEdit()) {
+      <button class="btn btn-primary" routerLink="/users/new">
+        <span>+ Nouvel Utilisateur</span>
+      </button>
+    }
   </div>
 
-  <div *ngIf="isLoading" class="text-center my-5">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      {{ errorMessage() }}
     </div>
-    <p class="mt-2">Loading users...</p>
-  </div>
+  }
 
-  <div *ngIf="error" class="alert alert-danger" role="alert">
-    {{ error }}
-  </div>
-
-  <div *ngIf="!isLoading && !error" class="card">
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
+  @if (isLoading()) {
+    <div class="loading">
+      <p>Chargement des utilisateurs...</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Téléphone</th>
+            <th>Entreprise</th>
+            <th>Rôle</th>
+            <th>Statut</th>
+            <th>Dernière connexion</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (users().length === 0) {
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Last Login</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users">
-              <td>{{ user.firstName }} {{ user.lastName }}</td>
-              <td>{{ user.email }}</td>
-              <td>
-                <span class="badge bg-info text-dark">{{ user.role | titlecase }}</span>
-              </td>
-              <td>
-                <span [ngClass]="getStatusClass(user.status)">
-                  {{ user.status | titlecase }}
-                </span>
-              </td>
-              <td>{{ user.lastLogin | date:'medium' }}</td>
-              <td>
-                <div class="btn-group btn-group-sm">
-                  <a [routerLink]="['/users', user.id]" class="btn btn-outline-primary">
-                    <i class="bi bi-eye"></i>
-                  </a>
-                  <a [routerLink]="['/users', user.id, 'edit']" class="btn btn-outline-secondary">
-                    <i class="bi bi-pencil"></i>
-                  </a>
-                </div>
+              <td colspan="10" class="empty-state">
+                Aucun utilisateur trouvé
               </td>
             </tr>
-          </tbody>
-        </table>
-      </div>
+          } @else {
+            @for (user of users(); track user.id) {
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.lastName || '-' }}</td>
+                <td>{{ user.firstName || '-' }}</td>
+                <td>{{ user.phone || '-' }}</td>
+                <td>{{ user.company || '-' }}</td>
+                <td>
+                  <span [class]="'badge ' + getRoleBadgeClass(user.role)">
+                    {{ user.role }}
+                  </span>
+                </td>
+                <td>
+                  <span [class]="'badge ' + getStatusBadgeClass(user.status)">
+                    {{ user.status || 'ACTIVE' }}
+                  </span>
+                </td>
+                <td>
+                  @if (user.lastLogin) {
+                    {{ user.lastLogin | date:'short' }}
+                  } @else {
+                    <span class="text-muted">Jamais</span>
+                  }
+                </td>
+                <td class="actions">
+                  @if (canEdit()) {
+                    <button
+                      class="btn-icon btn-edit"
+                      [routerLink]="['/users', user.id, 'edit']"
+                      title="Modifier"
+                    >
+                      ✏️
+                    </button>
+                  }
+                  @if (canDelete()) {
+                    <button
+                      class="btn-icon btn-delete"
+                      (click)="deleteUser(user.id, user.email)"
+                      title="Supprimer"
+                    >
+                      🗑️
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
     </div>
-  </div>
+  }
 </div>

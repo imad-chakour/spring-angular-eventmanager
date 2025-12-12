@@ -1,47 +1,105 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { User, UserStatus } from '../../models/user.model';
-import { UserService } from '../../services/user.service';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { UserService } from '../../../../core/services/user.service';
+import { AuthService } from '../../../../core/auth.service';
+import { User, UserRole, UserStatus } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './user-list.component.html'
+  imports: [CommonModule, RouterLink, DatePipe],
+  templateUrl: './user-list.component.html',
+  styleUrl: './user-list.component.css'
 })
 export class UserListComponent implements OnInit {
-  users: User[] = [];
-  isLoading = false;
-  error: string | null = null;
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(private userService: UserService) {}
+  users = signal<User[]>([]);
+  isLoading = signal<boolean>(true);
+  errorMessage = signal<string | null>(null);
+  currentUser = this.authService.currentUser;
+
+  readonly UserRole = UserRole;
+  readonly UserStatus = UserStatus;
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
     this.userService.getUsers().subscribe({
-      next: (data) => {
-        this.users = data;
-        this.isLoading = false;
+      next: (users) => {
+        console.log('Users loaded:', users);
+        // Ensure users is an array
+        const usersArray = Array.isArray(users) ? users : [];
+        this.users.set(usersArray);
+        this.isLoading.set(false);
       },
-      error: (err) => {
-        this.error = 'Failed to load users. Please try again later.';
-        this.isLoading = false;
-        console.error('Error loading users:', err);
+      error: (error) => {
+        console.error('Error loading users:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
+        this.errorMessage.set(
+          error.error?.error || 
+          error.error?.message || 
+          `Erreur lors du chargement des utilisateurs (${error.status || 'Unknown'})`
+        );
+        this.isLoading.set(false);
       }
     });
   }
 
-  getStatusClass(status: UserStatus): string {
-    switch (status) {
-      case 'ACTIVE': return 'badge bg-success';
-      case 'INACTIVE': return 'badge bg-secondary';
-      case 'SUSPENDED': return 'badge bg-warning text-dark';
-      default: return 'badge bg-secondary';
+  deleteUser(id: number | undefined, email: string): void {
+    if (!id) return;
+
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur ${email} ?`)) {
+      this.userService.deleteUser(id).subscribe({
+        next: () => {
+          this.loadUsers();
+        },
+        error: (error) => {
+          alert('Erreur lors de la suppression de l\'utilisateur');
+          console.error('Error deleting user:', error);
+        }
+      });
     }
+  }
+
+  getRoleBadgeClass(role: UserRole): string {
+    const classes: Record<UserRole, string> = {
+      [UserRole.ADMIN]: 'badge-admin',
+      [UserRole.MARKETING_MANAGER]: 'badge-manager',
+      [UserRole.MARKETING_USER]: 'badge-user',
+      [UserRole.PARTICIPANT]: 'badge-participant'
+    };
+    return classes[role] || 'badge-default';
+  }
+
+  getStatusBadgeClass(status: UserStatus | undefined): string {
+    if (!status) return 'badge-default';
+    const classes: Record<UserStatus, string> = {
+      [UserStatus.ACTIVE]: 'badge-active',
+      [UserStatus.INACTIVE]: 'badge-inactive',
+      [UserStatus.SUSPENDED]: 'badge-suspended'
+    };
+    return classes[status] || 'badge-default';
+  }
+
+  canEdit(): boolean {
+    return this.authService.isAdmin() || this.authService.isMarketingManager();
+  }
+
+  canDelete(): boolean {
+    return this.authService.isAdmin();
   }
 }

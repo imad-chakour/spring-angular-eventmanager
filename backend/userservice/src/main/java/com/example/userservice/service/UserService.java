@@ -39,16 +39,28 @@ public class UserService {
 
     public User saveUser(User user) {
         if (user.getId() == null) {
+            // New user - encode password
             user.setCreatedAt(LocalDateTime.now());
-            if (user.getPassword() != null) {
+            if (user.getPassword() != null && !isPasswordEncoded(user.getPassword())) {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
             }
-        } else if (user.getPassword() != null) {
-            // re-encode password if it has been changed
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            // Update existing user - only encode if password is not already encoded
+            if (user.getPassword() != null && !isPasswordEncoded(user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
         }
         user.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(user);
+    }
+
+    /**
+     * Check if password is already BCrypt encoded (starts with $2a$, $2b$, or $2y$)
+     */
+    private boolean isPasswordEncoded(String password) {
+        return password != null && (password.startsWith("$2a$") || 
+                                    password.startsWith("$2b$") || 
+                                    password.startsWith("$2y$"));
     }
 
     public Optional<User> getUserByEmail(String email) {

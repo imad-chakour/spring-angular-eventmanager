@@ -1,0 +1,123 @@
+<!-- src/app/features/campaigns/campaign-form.component.html -->
+<div class="campaign-form">
+  <h2>{{ isEditing ? 'Edit Campaign' : 'Create New Campaign' }}</h2>
+
+  <form (ngSubmit)="onSubmit()" #campaignForm="ngForm">
+    <div class="form-group">
+      <label for="name">Campaign Name *</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        [(ngModel)]="formData.name"
+        required
+        class="form-control"
+        placeholder="Enter campaign name"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        [(ngModel)]="formData.description"
+        class="form-control"
+        rows="3"
+        placeholder="Describe your campaign..."
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="startDate">Start Date *</label>
+        <input
+          type="date"
+          id="startDate"
+          name="startDate"
+          [(ngModel)]="formData.startDate"
+          required
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="endDate">End Date *</label>
+        <input
+          type="date"
+          id="endDate"
+          name="endDate"
+          [(ngModel)]="formData.endDate"
+          required
+          class="form-control"
+        />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="budget">Budget ($)</label>
+        <input
+          type="number"
+          id="budget"
+          name="budget"
+          [(ngModel)]="formData.budget"
+          min="0"
+          step="0.01"
+          class="form-control"
+          placeholder="0.00"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="channel">Channel *</label>
+        <select
+          id="channel"
+          name="channel"
+          [(ngModel)]="formData.channel"
+          required
+          class="form-control"
+        >
+          <option *ngFor="let option of channelOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="segments">Target Segments</label>
+      <div class="segments-input">
+        <input
+          type="text"
+          [(ngModel)]="newSegment"
+          (keyup.enter)="addSegment()"
+          [ngModelOptions]="{standalone: true}"
+          class="form-control"
+          placeholder="Add a segment and press Enter"
+        />
+        <button type="button" (click)="addSegment()" class="btn-add-segment">+ Add</button>
+      </div>
+
+      @if (formData.targetSegments.length > 0) {
+        <div class="segment-tags">
+          @for (segment of formData.targetSegments; track segment) {
+            <span class="segment-tag">
+              {{ segment }}
+              <button type="button" (click)="removeSegment(segment)" class="remove-tag">×</button>
+            </span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-actions">
+      <button type="button" (click)="onCancel()" class="btn-secondary">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="!campaignForm.form.valid" class="btn-primary">
+        {{ isEditing ? 'Update Campaign' : 'Create Campaign' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -29,6 +29,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/backend/api_sb/pom.xml" />
+        <option value="$PROJECT_DIR$/backend/participantservice/pom.xml" />
         <option value="$PROJECT_DIR$/msproducts/pom.xml" />
       </set>
     </option>

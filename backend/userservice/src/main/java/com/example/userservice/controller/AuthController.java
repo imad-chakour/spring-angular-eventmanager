@@ -49,17 +49,24 @@ public class AuthController {
             if (userOpt.isEmpty()) {
                 System.out.println("User not found in database");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("error", "User not found"));
+                        .body(Map.of("error", "Invalid email or password"));
             }
 
             User dbUser = userOpt.get();
             System.out.println("User found: " + dbUser.getEmail());
             System.out.println("DB Password hash: " + dbUser.getPassword());
 
-            // Try manual password check
+            // Verify password before attempting authentication
             boolean passwordMatches = passwordEncoder.matches(password, dbUser.getPassword());
-            System.out.println("Manual password check: " + passwordMatches);
+            System.out.println("Password verification: " + passwordMatches);
+            
+            if (!passwordMatches) {
+                System.out.println("Password does not match for user: " + email);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Invalid email or password"));
+            }
 
+            // If password matches, proceed with authentication
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
             );
@@ -73,9 +80,8 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (AuthenticationException ex) {
             System.out.println("Authentication failed: " + ex.getMessage());
-            ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Invalid credentials", "details", ex.getMessage()));
+                    .body(Map.of("error", "Invalid email or password"));
         }
     }
 
@@ -85,13 +91,12 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Email already in use"));
         }
 
-        // Encode password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // SECURITY: Force PARTICIPANT role for all registrations
+        // Role assignment can only be done by admins via user management
+        user.setRole(com.example.userservice.model.UserRole.PARTICIPANT);
 
-        // Set default role if not provided
-        if (user.getRole() == null) {
-            user.setRole(com.example.userservice.model.UserRole.PARTICIPANT);
-        }
+        // Password encoding is handled by UserService.saveUser()
+        // Do NOT encode here to avoid double encoding
 
         User saved = userService.saveUser(user);
 

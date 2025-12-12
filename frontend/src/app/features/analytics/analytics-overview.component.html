@@ -1,30 +1,129 @@
-<div class="page">
-  <h1>Analytics (analyticsservice :9010)</h1>
+<div class="analytics-container">
+  <div class="header">
+    <h1>Analytics & Métriques</h1>
+  </div>
 
-  <table class="data-table" *ngIf="metrics.length; else empty">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Event</th>
-        <th>Total Registrations</th>
-        <th>Attendance</th>
-        <th>Attendance Rate</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let m of metrics">
-        <td>{{ m.id }}</td>
-        <td>{{ m.eventId }}</td>
-        <td>{{ m.totalRegistrations }}</td>
-        <td>{{ m.actualAttendance }}</td>
-        <td>{{ m.attendanceRate }}%</td>
-      </tr>
-    </tbody>
-  </table>
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      {{ errorMessage() }}
+    </div>
+  }
 
-  <ng-template #empty>
-    <p>No metrics found.</p>
-  </ng-template>
+  @if (isLoading()) {
+    <div class="loading">
+      <p>Chargement des métriques...</p>
+    </div>
+  } @else {
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Campagnes</div>
+        <div class="stat-value">{{ totalCampaigns() }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Événements</div>
+        <div class="stat-value">{{ totalEvents() }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Emails Envoyés</div>
+        <div class="stat-value">{{ totalSent() }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Inscriptions Total</div>
+        <div class="stat-value">{{ totalRegistrations() }}</div>
+      </div>
+    </div>
+
+    <!-- Campaign Metrics -->
+    <div class="metrics-section">
+      <h2>Métriques des Campagnes</h2>
+      <div class="table-container">
+        <table class="metrics-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Campagne ID</th>
+              <th>Référence</th>
+              <th>Emails Envoyés</th>
+              <th>Emails Livrés</th>
+              <th>Emails Ouverts</th>
+              <th>Clics</th>
+              <th>Conversions</th>
+              <th>Taux d'ouverture</th>
+              <th>Taux de clic</th>
+              <th>Taux de conversion</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (campaignMetrics().length === 0) {
+              <tr>
+                <td colspan="11" class="empty-state">
+                  Aucune métrique de campagne disponible
+                </td>
+              </tr>
+            } @else {
+              @for (metric of campaignMetrics(); track metric.id) {
+                <tr>
+                  <td>{{ metric.id }}</td>
+                  <td>{{ metric.campaignId }}</td>
+                  <td>{{ metric.campaignReference || '-' }}</td>
+                  <td>{{ metric.emailsSent || 0 }}</td>
+                  <td>{{ metric.emailsDelivered || 0 }}</td>
+                  <td>{{ metric.emailsOpened || 0 }}</td>
+                  <td>{{ metric.clicks || 0 }}</td>
+                  <td>{{ metric.conversions || 0 }}</td>
+                  <td>{{ (metric.openRate || 0) | number:'1.2-2' }}%</td>
+                  <td>{{ (metric.clickRate || 0) | number:'1.2-2' }}%</td>
+                  <td>{{ (metric.conversionRate || 0) | number:'1.2-2' }}%</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Event Metrics -->
+    <div class="metrics-section">
+      <h2>Métriques des Événements</h2>
+      <div class="table-container">
+        <table class="metrics-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Événement ID</th>
+              <th>Inscriptions Total</th>
+              <th>Inscriptions Confirmées</th>
+              <th>Présence Réelle</th>
+              <th>Taux de Présence</th>
+              <th>Taux d'Annulation</th>
+              <th>Score de Satisfaction</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (eventMetrics().length === 0) {
+              <tr>
+                <td colspan="8" class="empty-state">
+                  Aucune métrique d'événement disponible
+                </td>
+              </tr>
+            } @else {
+              @for (metric of eventMetrics(); track metric.id) {
+                <tr>
+                  <td>{{ metric.id }}</td>
+                  <td>{{ metric.eventId }}</td>
+                  <td>{{ metric.totalRegistrations || 0 }}</td>
+                  <td>{{ metric.confirmedRegistrations || 0 }}</td>
+                  <td>{{ metric.actualAttendance || 0 }}</td>
+                  <td>{{ (metric.attendanceRate || 0) | number:'1.2-2' }}%</td>
+                  <td>{{ (metric.cancellationRate || 0) | number:'1.2-2' }}%</td>
+                  <td>{{ (metric.satisfactionScore || 0) | number:'1.1-1' }}/5</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
 </div>
-
-

@@ -17,8 +17,8 @@ public class Registration {
     @Column(name = "event_id", nullable = false)
     private Long eventId;
 
-    @Column(name = "participant_id", nullable = false)
-    private Long participantId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;  // Changed from participantId to userId
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

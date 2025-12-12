@@ -2,8 +2,6 @@ package com.example.userservice.controller;
 
 import com.example.userservice.model.User;
 import com.example.userservice.service.UserService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +21,12 @@ public class UserController {
         return "User Service is running!";
     }
 
-    @Retry(name = "userRetry", fallbackMethod = "fallbackUsersCB")
-    @CircuitBreaker(name = "userCB", fallbackMethod = "fallbackUsersCB")
     @GetMapping
     public ResponseEntity<?> getUsers() {
-        simulateRandomFailure();
-        List<User> users = (List<User>) userService.getUsers();
+        Iterable<User> usersIterable = userService.getUsers();
+        // Convert Iterable to List for proper JSON serialization
+        List<User> users = new java.util.ArrayList<>();
+        usersIterable.forEach(users::add);
         // Remove passwords from response
         users.forEach(user -> user.setPassword(null));
         return ResponseEntity.ok(users);
@@ -70,6 +68,14 @@ public class UserController {
                     existing.setEmail(user.getEmail());
                     existing.setRole(user.getRole());
                     existing.setStatus(user.getStatus());
+                    // Marketing fields
+                    existing.setPhone(user.getPhone());
+                    existing.setCompany(user.getCompany());
+                    existing.setJobTitle(user.getJobTitle());
+                    existing.setSegments(user.getSegments());
+                    existing.setCommunicationPreferences(user.getCommunicationPreferences());
+                    existing.setOptInMarketing(user.getOptInMarketing());
+                    existing.setLastActivity(user.getLastActivity());
                     User updated = userService.saveUser(existing);
                     updated.setPassword(null);
                     return ResponseEntity.ok(updated);
@@ -89,22 +95,4 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    private void simulateRandomFailure() {
-        if (Math.random() < 0.3) {
-            throw new RuntimeException("Simulated random failure in User Service");
-        }
-    }
-
-    public ResponseEntity<?> fallbackUsersCB(Exception e) {
-        System.err.println("User Service Fallback: " + e.getMessage());
-        User fallbackUser = new User(
-                1L,
-                "admin@eventflow.com",
-                "Admin",
-                "User",
-                com.example.userservice.model.UserRole.ADMIN,
-                com.example.userservice.model.UserStatus.ACTIVE
-        );
-        return ResponseEntity.ok(List.of(fallbackUser));
-    }
 }

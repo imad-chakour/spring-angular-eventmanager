@@ -1,30 +1,183 @@
-<div class="page">
-  <h1>Campaigns (campaignservice :9020)</h1>
+<!-- src/app/features/campaigns/campaign-list.component.html -->
+<div class="campaign-container">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1>Marketing Campaigns</h1>
+      <p class="subtitle">Manage your marketing campaigns and track their performance</p>
+    </div>
+    <button class="btn-refresh" (click)="loadCampaigns()" [disabled]="isLoading()" title="Rafraîchir">
+      <span>🔄</span>
+    </button>
+  </div>
 
-  <table class="data-table" *ngIf="campaigns.length; else empty">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Ref</th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Organizer</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of campaigns">
-        <td>{{ c.id }}</td>
-        <td>{{ c.reference }}</td>
-        <td>{{ c.name }}</td>
-        <td>{{ c.status }}</td>
-        <td>{{ c.organizerId }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Controls -->
+  <div class="controls">
+    <div class="filters">
+      <div class="search-box">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+          placeholder="Search campaigns..."
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
 
-  <ng-template #empty>
-    <p>No campaigns found.</p>
-  </ng-template>
+      <select
+        [(ngModel)]="selectedStatus"
+        (change)="onStatusFilterChange()"
+        class="status-filter"
+      >
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+
+      <button (click)="startCreate()" class="btn-primary">
+        <span>+</span> Create Campaign
+      </button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-label">Total</span>
+        <span class="stat-value">{{ totalCampaigns() }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Active</span>
+        <span class="stat-value">{{ activeCampaigns() }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Draft</span>
+        <span class="stat-value">{{ draftCampaigns() }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Completed</span>
+        <span class="stat-value">{{ completedCampaigns() }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Archived</span>
+        <span class="stat-value">{{ archivedCampaigns() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Campaign Form (when creating/editing) -->
+  @if (isCreating || selectedCampaign) {
+    <div class="form-overlay">
+      <div class="form-container">
+        <app-campaign-form
+          [campaign]="selectedCampaign"
+          (cancel)="onFormCancel()"
+          (submit)="onFormSubmit()"
+        ></app-campaign-form>
+      </div>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading campaigns...</p>
+    </div>
+  }
+
+  <!-- Campaign List -->
+  @if (!isLoading()) {
+    @if (filteredCampaigns().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <h3>No campaigns found</h3>
+        <p>{{ searchQuery || selectedStatus !== 'ALL' ? 'Try changing your filters' : 'Create your first campaign to get started' }}</p>
+        <button (click)="startCreate()" class="btn-secondary">
+          Create Campaign
+        </button>
+      </div>
+    } @else {
+      <div class="campaign-grid">
+        @for (campaign of filteredCampaigns(); track campaign.id) {
+          <div class="campaign-card">
+            <div class="campaign-header">
+              <div class="campaign-title">
+                <h3>{{ campaign.name }}</h3>
+                <app-campaign-status-badge [status]="campaign.status"></app-campaign-status-badge>
+              </div>
+              <div class="campaign-actions">
+                <button (click)="editCampaign(campaign)" class="btn-icon" title="Edit">
+                  ✏️
+                </button>
+                <button (click)="deleteCampaign(campaign)" class="btn-icon btn-danger" title="Delete">
+                  🗑️
+                </button>
+              </div>
+            </div>
+
+            <div class="campaign-body">
+              <p class="campaign-description">
+                {{ campaign.description ? campaign.description : 'No description provided' }}
+              </p>
+
+              <div class="campaign-details">
+                <div class="detail-item">
+                  <span class="detail-label">Reference:</span>
+                  <span class="detail-value">{{ campaign.reference }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Channel:</span>
+                  <span class="detail-value">{{ getChannelLabel(campaign.channel) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Budget:</span>
+                  <span class="detail-value">{{ formatCurrency(campaign.budget) }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Duration:</span>
+                  <span class="detail-value">
+                    {{ formatDate(campaign.startDate) }} - {{ formatDate(campaign.endDate) }}
+                  </span>
+                </div>
+              </div>
+
+              @if (campaign.targetSegments && campaign.targetSegments.length > 0) {
+                <div class="segments">
+                  <span class="segments-label">Target Segments:</span>
+                  <div class="segment-tags">
+                    @for (segment of campaign.targetSegments; track segment) {
+                      <span class="segment-tag">{{ segment }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="campaign-footer">
+              <div class="status-actions">
+                @if (campaign.status === 'BROUILLON') {
+                  <button (click)="updateCampaignStatus(campaign, 'ACTIF')" class="btn-status btn-active">
+                    Activate
+                  </button>
+                }
+                @if (campaign.status === 'ACTIF') {
+                  <button (click)="updateCampaignStatus(campaign, 'TERMINE')" class="btn-status btn-complete">
+                    Mark Complete
+                  </button>
+                }
+                @if (campaign.status === 'TERMINE') {
+                  <button (click)="updateCampaignStatus(campaign, 'ARCHIVE')" class="btn-status btn-archive">
+                    Archive
+                  </button>
+                }
+              </div>
+              <span class="campaign-date">
+                Updated: {{ formatDate(campaign.updatedAt) }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
 </div>
-
-

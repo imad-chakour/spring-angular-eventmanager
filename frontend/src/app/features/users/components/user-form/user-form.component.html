@@ -1,132 +1,198 @@
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header">
-          <h3>{{ isEditMode ? 'Edit' : 'Create New' }} User</h3>
+<div class="user-form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h1>{{ isEditMode() ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur' }}</h1>
+      <button class="btn-back" routerLink="/users">← Retour</button>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">Prénom</label>
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            placeholder="Jean"
+          />
         </div>
-        <div class="card-body">
-          <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-            <div *ngIf="error" class="alert alert-danger" role="alert">
-              {{ error }}
-            </div>
 
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="firstName" class="form-label">First Name</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="firstName"
-                  formControlName="firstName"
-                  [ngClass]="{'is-invalid': f['firstName'].touched && f['firstName'].errors}"
-                >
-                <div *ngIf="f['firstName'].touched && f['firstName'].errors" class="invalid-feedback">
-                  <div *ngIf="f['firstName'].errors?.['required']">First name is required</div>
-                  <div *ngIf="f['firstName'].errors?.['minlength']">
-                    First name must be at least 2 characters
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label for="lastName" class="form-label">Last Name</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="lastName"
-                  formControlName="lastName"
-                  [ngClass]="{'is-invalid': f['lastName'].touched && f['lastName'].errors}"
-                >
-                <div *ngIf="f['lastName'].touched && f['lastName'].errors" class="invalid-feedback">
-                  <div *ngIf="f['lastName'].errors?.['required']">Last name is required</div>
-                  <div *ngIf="f['lastName'].errors?.['minlength']">
-                    Last name must be at least 2 characters
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label for="email" class="form-label">Email address</label>
-              <input 
-                type="email" 
-                class="form-control" 
-                id="email"
-                formControlName="email"
-                [ngClass]="{'is-invalid': f['email'].touched && f['email'].errors}"
-                [readonly]="isEditMode"
-              >
-              <div *ngIf="f['email'].touched && f['email'].errors" class="invalid-feedback">
-                <div *ngIf="f['email'].errors?.['required']">Email is required</div>
-                <div *ngIf="f['email'].errors?.['email']">Please enter a valid email</div>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="role" class="form-label">Role</label>
-                <select 
-                  class="form-select" 
-                  id="role" 
-                  formControlName="role"
-                  [ngClass]="{'is-invalid': f['role'].touched && f['role'].errors}"
-                >
-                  <option *ngFor="let role of roles" [value]="role">
-                    {{ role | titlecase | replace: '_': ' ' }}
-                  </option>
-                </select>
-                <div *ngIf="f['role'].touched && f['role'].errors" class="invalid-feedback">
-                  Role is required
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label for="status" class="form-label">Status</label>
-                <select 
-                  class="form-select" 
-                  id="status" 
-                  formControlName="status"
-                  [ngClass]="{'is-invalid': f['status'].touched && f['status'].errors}"
-                >
-                  <option *ngFor="let status of statuses" [value]="status">
-                    {{ status | titlecase }}
-                  </option>
-                </select>
-                <div *ngIf="f['status'].touched && f['status'].errors" class="invalid-feedback">
-                  Status is required
-                </div>
-              </div>
-            </div>
-
-            <div class="mb-3" *ngIf="!isEditMode">
-              <label for="password" class="form-label">Password</label>
-              <input 
-                type="password" 
-                class="form-control" 
-                id="password"
-                formControlName="password"
-                [ngClass]="{'is-invalid': f['password'].touched && f['password'].errors}"
-              >
-              <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
-                <div *ngIf="f['password'].errors?.['required']">Password is required</div>
-                <div *ngIf="f['password'].errors?.['minlength']">
-                  Password must be at least 6 characters
-                </div>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
-                <i class="bi bi-x-circle me-2"></i>Cancel
-              </button>
-              <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid || isLoading">
-                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                <i *ngIf="!isLoading" class="bi bi-save me-2"></i>
-                {{ isEditMode ? 'Update' : 'Create' }} User
-              </button>
-            </div>
-          </form>
+        <div class="form-group">
+          <label for="lastName">Nom</label>
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            placeholder="Dupont"
+          />
         </div>
       </div>
-    </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="votre.email@example.com"
+          [class.error]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+        />
+        @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+          <span class="error-message">
+            @if (userForm.get('email')?.errors?.['required']) {
+              L'email est requis
+            } @else if (userForm.get('email')?.errors?.['email']) {
+              Format d'email invalide
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="role">Rôle *</label>
+          <select
+            id="role"
+            formControlName="role"
+            [class.error]="userForm.get('role')?.invalid && userForm.get('role')?.touched"
+          >
+            @for (role of userRoles; track role) {
+              <option [value]="role">{{ role }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Statut *</label>
+          <select
+            id="status"
+            formControlName="status"
+            [class.error]="userForm.get('status')?.invalid && userForm.get('status')?.touched"
+          >
+            @for (status of userStatuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">
+        <h3>Informations Marketing (Optionnel)</h3>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            placeholder="+33 6 12 34 56 78"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="company">Entreprise</label>
+          <input
+            id="company"
+            type="text"
+            formControlName="company"
+            placeholder="Nom de l'entreprise"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="jobTitle">Poste</label>
+        <input
+          id="jobTitle"
+          type="text"
+          formControlName="jobTitle"
+          placeholder="Titre du poste"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            formControlName="optInMarketing"
+          />
+          <span>Opt-in marketing (recevoir des communications marketing)</span>
+        </label>
+      </div>
+
+      @if (!isEditMode()) {
+        <div class="form-group">
+          <label for="password">Mot de passe *</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            [class.error]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
+          />
+          @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+            <span class="error-message">
+              @if (userForm.get('password')?.errors?.['required']) {
+                Le mot de passe est requis
+              } @else if (userForm.get('password')?.errors?.['minlength']) {
+                Le mot de passe doit contenir au moins 6 caractères
+              }
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmer le mot de passe *</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="••••••••"
+            [class.error]="userForm.get('confirmPassword')?.errors?.['passwordMismatch'] && userForm.get('confirmPassword')?.touched"
+          />
+          @if (userForm.get('confirmPassword')?.errors?.['passwordMismatch'] && userForm.get('confirmPassword')?.touched) {
+            <span class="error-message">
+              Les mots de passe ne correspondent pas
+            </span>
+          }
+        </div>
+      } @else {
+        <div class="form-group">
+          <label for="password">Nouveau mot de passe (optionnel)</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="Laisser vide pour ne pas changer"
+          />
+          <small class="form-hint">Laisser vide si vous ne souhaitez pas modifier le mot de passe</small>
+        </div>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" routerLink="/users">
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isLoading() || userForm.invalid"
+        >
+          @if (isLoading()) {
+            <span>Enregistrement...</span>
+          } @else {
+            <span>{{ isEditMode() ? 'Modifier' : 'Créer' }}</span>
+          }
+        </button>
+      </div>
+    </form>
   </div>
 </div>

@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface RegistrationRepository extends CrudRepository<Registration, Long> {
     List<Registration> findByEventId(Long eventId);
-    List<Registration> findByParticipantId(Long participantId);
-    Optional<Registration> findByEventIdAndParticipantId(Long eventId, Long participantId);
+    List<Registration> findByUserId(Long userId);  // Changed from findByParticipantId
+    Optional<Registration> findByEventIdAndUserId(Long eventId, Long userId);  // Changed from findByEventIdAndParticipantId
 }
