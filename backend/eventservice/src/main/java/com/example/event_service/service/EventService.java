@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @Data
 @Service
@@ -33,7 +34,31 @@ public class EventService {
     }
 
     public Iterable<Event> getEvents() {
-        return eventRepository.findAll();
+        System.out.println("=== EventService: getEvents ===");
+        try {
+            System.out.println("Repository instance: " + eventRepository);
+            Iterable<Event> events = eventRepository.findAll();
+            System.out.println("Events from repository (Iterable): " + events);
+            // Count events
+            long count = StreamSupport.stream(events.spliterator(), false).count();
+            System.out.println("Total events count: " + count);
+            
+            // Log first few events if any
+            if (count > 0) {
+                System.out.println("First event details:");
+                events.forEach(event -> {
+                    System.out.println("  - Event ID: " + event.getId() + ", Title: " + event.getTitle());
+                });
+            } else {
+                System.out.println("⚠️ WARNING: No events found in database. Database might be empty or connection issue.");
+            }
+            
+            return events;
+        } catch (Exception e) {
+            System.err.println("❌ ERROR in EventService.getEvents: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public Iterable<Event> getEventsByOrganizer(Long organizerId) {

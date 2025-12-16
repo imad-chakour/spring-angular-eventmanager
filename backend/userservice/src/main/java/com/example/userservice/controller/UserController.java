@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:4200")
+// CORS is handled by the Gateway (CorsConfig), no need for @CrossOrigin here
 public class UserController {
 
     @Autowired

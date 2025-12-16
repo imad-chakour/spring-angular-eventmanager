@@ -1,9 +1,9 @@
-// src/app/core/services/campaign.service.ts
-import { Injectable, inject, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
-import { getApiUrl } from '../../core/config/api.config';
+import { getApiUrl } from '../config/api.config';
 
 export interface Campaign {
   id: number;
@@ -41,7 +41,7 @@ export interface CampaignFormData {
 export class CampaignService {
   private http = inject(HttpClient);
   private platformId = inject(PLATFORM_ID);
-  private apiUrl = getApiUrl('/api/campaigns'); // Via Spring Cloud Gateway
+  private apiUrl = getApiUrl('/api/campaigns');
 
   // Mock data for SSR/prerendering
   private mockCampaigns: Campaign[] = [
@@ -82,12 +82,41 @@ export class CampaignService {
   }
 
   getAllCampaigns(): Observable<Campaign[]> {
-    // Return mock data during SSR/prerendering
     if (!this.isBrowser()) {
       return of(this.mockCampaigns);
     }
-
-    return this.http.get<Campaign[]>(this.apiUrl);
+    console.log('=== CampaignService: getAllCampaigns ===');
+    console.log('API URL:', this.apiUrl);
+    console.log('Is browser:', this.isBrowser());
+    
+    return this.http.get<Campaign[]>(this.apiUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    }).pipe(
+      catchError((error) => {
+        console.error('=== CampaignService: Error fetching campaigns ===');
+        console.error('URL:', this.apiUrl);
+        console.error('Status:', error.status);
+        console.error('StatusText:', error.statusText);
+        console.error('Message:', error.message);
+        console.error('Error name:', error.name);
+        console.error('Error object:', error);
+        
+        if (error.status === 0 || !error.status) {
+          console.error('⚠️ STATUS 0 DETECTED - This is a network/CORS error!');
+          console.error('Possible causes:');
+          console.error('1. Service is not running (check campaignservice on port 9020)');
+          console.error('2. Gateway is not running (check reactivegateway on port 1111)');
+          console.error('3. CORS is blocking the request (check CorsConfig in gateway)');
+          console.error('4. Network connectivity issue');
+          console.error('5. Token is missing or invalid (check localStorage)');
+        }
+        
+        return throwError(() => error);
+      })
+    );
   }
 
   getCampaignById(id: number): Observable<Campaign> {
@@ -95,7 +124,6 @@ export class CampaignService {
       const campaign = this.mockCampaigns.find(c => c.id === id);
       return campaign ? of(campaign) : of(this.mockCampaigns[0]);
     }
-
     return this.http.get<Campaign>(`${this.apiUrl}/${id}`);
   }
 
@@ -119,7 +147,6 @@ export class CampaignService {
     if (!this.isBrowser()) {
       return of(this.mockCampaigns.filter(c => c.status === status));
     }
-
     return this.http.get<Campaign[]>(`${this.apiUrl}/status/${status}`);
   }
 }

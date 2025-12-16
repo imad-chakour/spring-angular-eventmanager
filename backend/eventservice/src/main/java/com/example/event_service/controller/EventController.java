@@ -5,10 +5,13 @@ import com.example.event_service.service.EventService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/events")
@@ -25,19 +28,42 @@ public class EventController {
     @Retry(name = "eventRetry", fallbackMethod = "fallbackEventsCB")
     @CircuitBreaker(name = "eventCB", fallbackMethod = "fallbackEventsCB")
     @GetMapping
-    public Iterable<Event> getEvents() {
-        simulateRandomFailure();
-        return eventService.getEvents();
+    public ResponseEntity<List<Event>> getEvents() {
+        // Temporarily disabled for debugging
+        // simulateRandomFailure();
+        System.out.println("=== EventController: getEvents ===");
+        try {
+            Iterable<Event> events = eventService.getEvents();
+            System.out.println("Events from service (Iterable): " + events);
+            List<Event> eventList = StreamSupport.stream(events.spliterator(), false)
+                    .collect(Collectors.toList());
+            System.out.println("Events converted to List, count: " + eventList.size());
+            if (!eventList.isEmpty()) {
+                System.out.println("First event: " + eventList.get(0));
+            } else {
+                System.out.println("⚠️ WARNING: Event list is empty - database might be empty or connection issue");
+            }
+            System.out.println("Returning ResponseEntity with list size: " + eventList.size());
+            return ResponseEntity.ok(eventList);
+        } catch (Exception e) {
+            System.err.println("❌ ERROR in getEvents: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(List.of());
+        }
     }
 
     @GetMapping("/organizer/{organizerId}")
-    public Iterable<Event> getEventsByOrganizer(@PathVariable("organizerId") final Long organizerId) {
-        return eventService.getEventsByOrganizer(organizerId);
+    public List<Event> getEventsByOrganizer(@PathVariable("organizerId") final Long organizerId) {
+        Iterable<Event> events = eventService.getEventsByOrganizer(organizerId);
+        return StreamSupport.stream(events.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/status/{status}")
-    public Iterable<Event> getEventsByStatus(@PathVariable("status") final EventStatus status) {
-        return eventService.getEventsByStatus(status);
+    public List<Event> getEventsByStatus(@PathVariable("status") final EventStatus status) {
+        Iterable<Event> events = eventService.getEventsByStatus(status);
+        return StreamSupport.stream(events.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
@@ -78,18 +104,24 @@ public class EventController {
 
     // Registration endpoints
     @GetMapping("/registrations")
-    public Iterable<Registration> getRegistrations() {
-        return eventService.getRegistrations();
+    public List<Registration> getRegistrations() {
+        Iterable<Registration> registrations = eventService.getRegistrations();
+        return StreamSupport.stream(registrations.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/registrations/event/{eventId}")
-    public Iterable<Registration> getRegistrationsByEvent(@PathVariable("eventId") final Long eventId) {
-        return eventService.getRegistrationsByEvent(eventId);
+    public List<Registration> getRegistrationsByEvent(@PathVariable("eventId") final Long eventId) {
+        Iterable<Registration> registrations = eventService.getRegistrationsByEvent(eventId);
+        return StreamSupport.stream(registrations.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/registrations/user/{userId}")
-    public Iterable<Registration> getRegistrationsByUser(@PathVariable("userId") final Long userId) {
-        return eventService.getRegistrationsByUser(userId);
+    public List<Registration> getRegistrationsByUser(@PathVariable("userId") final Long userId) {
+        Iterable<Registration> registrations = eventService.getRegistrationsByUser(userId);
+        return StreamSupport.stream(registrations.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/registrations/event/{eventId}/user/{userId}")

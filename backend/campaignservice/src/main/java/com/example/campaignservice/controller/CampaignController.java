@@ -3,15 +3,19 @@ package com.example.campaignservice.controller;
 import com.example.campaignservice.model.Campaign;
 import com.example.campaignservice.model.CampaignStatus;
 import com.example.campaignservice.model.Channel;
-import com.example.campaignservice.sevice.CampaignService;
+import com.example.campaignservice.service.CampaignService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/campaigns")
+// CORS is handled by the Gateway (CorsConfig), no need for @CrossOrigin here
 public class CampaignController {
 
     @Autowired
@@ -23,18 +27,24 @@ public class CampaignController {
     }
 
     @GetMapping
-    public Iterable<Campaign> getCampaigns() {
-        return campaignService.getCampaigns();
+    public List<Campaign> getCampaigns() {
+        Iterable<Campaign> campaigns = campaignService.getCampaigns();
+        return StreamSupport.stream(campaigns.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/organizer/{organizerId}")
-    public Iterable<Campaign> getCampaignsByOrganizer(@PathVariable("organizerId") final Long organizerId) {
-        return campaignService.getCampaignsByOrganizer(organizerId);
+    public List<Campaign> getCampaignsByOrganizer(@PathVariable("organizerId") final Long organizerId) {
+        Iterable<Campaign> campaigns = campaignService.getCampaignsByOrganizer(organizerId);
+        return StreamSupport.stream(campaigns.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/status/{status}")
-    public Iterable<Campaign> getCampaignsByStatus(@PathVariable("status") final CampaignStatus status) {
-        return campaignService.getCampaignsByStatus(status);
+    public List<Campaign> getCampaignsByStatus(@PathVariable("status") final CampaignStatus status) {
+        Iterable<Campaign> campaigns = campaignService.getCampaignsByStatus(status);
+        return StreamSupport.stream(campaigns.spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")

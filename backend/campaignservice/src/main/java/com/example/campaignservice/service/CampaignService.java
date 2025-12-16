@@ -1,9 +1,9 @@
-package com.example.campaignservice.sevice;
+package com.example.campaignservice.service;
 
 import com.example.campaignservice.client.UserClient;
 import com.example.campaignservice.model.Campaign;
 import com.example.campaignservice.model.CampaignStatus;
-import com.example.campaignservice.repositoy.CampaignRepository;
+import com.example.campaignservice.repository.CampaignRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

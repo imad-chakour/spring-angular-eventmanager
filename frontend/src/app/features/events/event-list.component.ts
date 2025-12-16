@@ -29,16 +29,41 @@ export class EventListComponent implements OnInit {
   loadEvents(): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
+    console.log('=== EventListComponent: Loading events ===');
 
     this.eventService.getEvents().subscribe({
       next: (events) => {
-        this.events.set(events as Event[]);
+        console.log('Events received:', events);
+        console.log('Events type:', typeof events, Array.isArray(events));
+        console.log('Events count:', Array.isArray(events) ? events.length : 0);
+        
+        // Ensure data is an array
+        const eventsArray = Array.isArray(events) ? events : [];
+        console.log('Setting events array with', eventsArray.length, 'items');
+        
+        // Validate event structure
+        if (eventsArray.length > 0) {
+          console.log('First event structure:', eventsArray[0]);
+        }
+        
+        this.events.set(eventsArray);
         this.isLoading.set(false);
+        this.errorMessage.set(null);
       },
       error: (error) => {
-        this.errorMessage.set('Erreur lors du chargement des événements');
+        console.error('=== EventListComponent: Error loading events ===');
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
+        const errorMsg = error.status 
+          ? `Erreur ${error.status}: ${error.statusText || error.message}`
+          : `Erreur lors du chargement: ${error.message || 'Erreur inconnue'}`;
+        this.errorMessage.set(errorMsg);
         this.isLoading.set(false);
-        console.error('Error loading events:', error);
+        this.events.set([]);
       }
     });
   }

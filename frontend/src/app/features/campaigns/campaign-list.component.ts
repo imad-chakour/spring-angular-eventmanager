@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
-import { CampaignService, Campaign, CampaignStatus, Channel } from './campaign.service';
+import { CampaignService, Campaign, CampaignStatus, Channel } from '../../core/services/campaign.service';
 import { CampaignFormComponent } from './campaign-form.component';
 import { CampaignStatusBadgeComponent } from './campaign-status-badge.component';
 import { filter, Subscription } from 'rxjs';
@@ -27,6 +27,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
   isCreating = false;
   selectedCampaign: Campaign | null = null;
   isLoading = signal(true);
+  errorMessage = signal<string | null>(null);
 
   // Computed properties for statistics
   totalCampaigns = computed(() => this.campaigns().length);
@@ -70,25 +71,48 @@ export class CampaignListComponent implements OnInit, OnDestroy {
 
   loadCampaigns(): void {
     this.isLoading.set(true);
+    this.errorMessage.set(null);
+    console.log('Loading campaigns from:', this.campaignService);
     this.campaignService.getAllCampaigns().subscribe({
       next: (data) => {
-        this.campaigns.set(data);
+        console.log('Campaigns received:', data);
+        console.log('Campaigns type:', typeof data, Array.isArray(data));
+        console.log('Campaigns count:', Array.isArray(data) ? data.length : 0);
+        // Ensure data is an array
+        const campaignsArray = Array.isArray(data) ? data : [];
+        console.log('Setting campaigns array with', campaignsArray.length, 'items');
+        this.campaigns.set(campaignsArray);
         this.filterCampaigns();
         this.isLoading.set(false);
+        this.errorMessage.set(null);
       },
       error: (error) => {
         console.error('Error loading campaigns:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
+        this.campaigns.set([]);
+        this.filterCampaigns();
         this.isLoading.set(false);
+        const errorMsg = error.status 
+          ? `Erreur ${error.status}: ${error.statusText || error.message}`
+          : `Erreur lors du chargement: ${error.message || 'Erreur inconnue'}`;
+        this.errorMessage.set(errorMsg);
       }
     });
   }
 
   filterCampaigns(): void {
     let filtered = this.campaigns();
+    console.log('Filtering campaigns. Total:', filtered.length, 'Status filter:', this.selectedStatus, 'Search:', this.searchQuery);
 
     // Filter by status
     if (this.selectedStatus !== 'ALL') {
       filtered = filtered.filter(c => c.status === this.selectedStatus);
+      console.log('After status filter:', filtered.length);
     }
 
     // Filter by search query
@@ -99,8 +123,10 @@ export class CampaignListComponent implements OnInit, OnDestroy {
         (c.description && c.description.toLowerCase().includes(query)) ||
         c.reference.toLowerCase().includes(query)
       );
+      console.log('After search filter:', filtered.length);
     }
 
+    console.log('Final filtered campaigns:', filtered.length);
     this.filteredCampaigns.set(filtered);
   }
 
@@ -163,15 +189,27 @@ export class CampaignListComponent implements OnInit, OnDestroy {
     return this.channelLabels[channel] || channel;
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString();
+  formatDate(dateString: string | null | undefined): string {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (error) {
+      console.error('Error formatting date:', dateString, error);
+      return 'Invalid date';
+    }
   }
 
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
+  formatCurrency(amount: number | null | undefined): string {
+    if (amount === null || amount === undefined) return 'N/A';
+    return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'EUR'
     }).format(amount || 0);
   }
 }

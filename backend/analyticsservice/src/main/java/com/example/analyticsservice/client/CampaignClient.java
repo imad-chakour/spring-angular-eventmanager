@@ -4,6 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +21,13 @@ public interface CampaignClient {
      */
     @GetMapping("/{id}")
     Map<String, Object> getCampaignById(@PathVariable("id") Long id);
+
+    /**
+     * Récupère toutes les campagnes
+     * @return Liste des campagnes
+     */
+    @GetMapping
+    List<Map<String, Object>> getAllCampaigns();
 }
 
 

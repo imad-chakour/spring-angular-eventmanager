@@ -1,7 +1,7 @@
 // src/app/features/campaigns/campaign-status-badge.component.ts
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CampaignStatus } from './campaign.service';
+import { CampaignStatus } from '../../core/services/campaign.service';
 
 @Component({
   selector: 'app-campaign-status-badge',

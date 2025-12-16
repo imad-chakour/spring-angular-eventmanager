@@ -2,7 +2,7 @@
 import { Component, Input, Output, EventEmitter, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CampaignService, Campaign, CampaignFormData, CampaignStatus, Channel } from './campaign.service';
+import { CampaignService, Campaign, CampaignFormData, CampaignStatus, Channel } from '../../core/services/campaign.service';
 
 @Component({
   selector: 'app-campaign-form',

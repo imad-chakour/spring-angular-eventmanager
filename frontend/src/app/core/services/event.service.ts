@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Event, Registration } from '../models/event.model';
 import { getApiUrl } from '../config/api.config';
 
@@ -12,7 +13,19 @@ export class EventService {
   private readonly apiUrl = getApiUrl('/api/events');
 
   getEvents(): Observable<Event[]> {
-    return this.http.get<Event[]>(this.apiUrl);
+    console.log('=== EventService: getEvents ===');
+    console.log('API URL:', this.apiUrl);
+    return this.http.get<Event[]>(this.apiUrl).pipe(
+      catchError((error) => {
+        console.error('=== EventService: Error fetching events ===');
+        console.error('URL:', this.apiUrl);
+        console.error('Status:', error.status);
+        console.error('StatusText:', error.statusText);
+        console.error('Message:', error.message);
+        console.error('Error object:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getEventById(id: number): Observable<Event> {

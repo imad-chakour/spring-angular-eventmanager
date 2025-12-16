@@ -35,29 +35,52 @@ export class AnalyticsOverviewComponent implements OnInit {
   loadMetrics(): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
+    console.log('=== AnalyticsOverviewComponent: Loading metrics ===');
 
     // Load both campaign and event metrics
     this.analyticsService.getCampaignMetrics().subscribe({
       next: (metrics) => {
-        this.campaignMetrics.set(metrics);
+        console.log('Campaign metrics received:', metrics);
+        console.log('Campaign metrics type:', typeof metrics, Array.isArray(metrics));
+        console.log('Campaign metrics count:', Array.isArray(metrics) ? metrics.length : 0);
+        const metricsArray = Array.isArray(metrics) ? metrics : [];
+        this.campaignMetrics.set(metricsArray);
         this.checkLoadingComplete();
       },
       error: (error) => {
+        console.error('=== AnalyticsOverviewComponent: Error loading campaign metrics ===');
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
         this.errorMessage.set('Erreur lors du chargement des métriques de campagnes');
+        this.campaignMetrics.set([]);
         this.checkLoadingComplete();
-        console.error('Error loading campaign metrics:', error);
       }
     });
 
     this.analyticsService.getEventMetrics().subscribe({
       next: (metrics) => {
-        this.eventMetrics.set(metrics);
+        console.log('Event metrics received:', metrics);
+        console.log('Event metrics type:', typeof metrics, Array.isArray(metrics));
+        console.log('Event metrics count:', Array.isArray(metrics) ? metrics.length : 0);
+        const metricsArray = Array.isArray(metrics) ? metrics : [];
+        this.eventMetrics.set(metricsArray);
         this.checkLoadingComplete();
       },
       error: (error) => {
+        console.error('=== AnalyticsOverviewComponent: Error loading event metrics ===');
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
         this.errorMessage.set('Erreur lors du chargement des métriques d\'événements');
+        this.eventMetrics.set([]);
         this.checkLoadingComplete();
-        console.error('Error loading event metrics:', error);
       }
     });
   }
@@ -66,6 +89,67 @@ export class AnalyticsOverviewComponent implements OnInit {
     // Simple check - in a real app, you'd use a more sophisticated loading state
     if (!this.isLoading()) return;
     setTimeout(() => this.isLoading.set(false), 500);
+  }
+
+  calculateAllMetrics(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    console.log('=== AnalyticsOverviewComponent: Calculating all metrics ===');
+
+    this.analyticsService.calculateAllMetrics().subscribe({
+      next: (result) => {
+        console.log('Metrics calculated:', result);
+        // Recharger les métriques après calcul
+        this.loadMetrics();
+      },
+      error: (error) => {
+        console.error('=== AnalyticsOverviewComponent: Error calculating metrics ===');
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error
+        });
+        this.errorMessage.set('Erreur lors du calcul des métriques');
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  calculateCampaignMetrics(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    console.log('=== AnalyticsOverviewComponent: Calculating campaign metrics ===');
+
+    this.analyticsService.calculateCampaignMetrics().subscribe({
+      next: (metrics) => {
+        console.log('Campaign metrics calculated:', metrics);
+        this.loadMetrics();
+      },
+      error: (error) => {
+        console.error('Error calculating campaign metrics:', error);
+        this.errorMessage.set('Erreur lors du calcul des métriques de campagnes');
+        this.isLoading.set(false);
+      }
+    });
+  }
+
+  calculateEventMetrics(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    console.log('=== AnalyticsOverviewComponent: Calculating event metrics ===');
+
+    this.analyticsService.calculateEventMetrics().subscribe({
+      next: (metrics) => {
+        console.log('Event metrics calculated:', metrics);
+        this.loadMetrics();
+      },
+      error: (error) => {
+        console.error('Error calculating event metrics:', error);
+        this.errorMessage.set('Erreur lors du calcul des métriques d\'événements');
+        this.isLoading.set(false);
+      }
+    });
   }
 }
 

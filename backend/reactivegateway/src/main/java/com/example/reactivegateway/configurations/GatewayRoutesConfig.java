@@ -30,9 +30,9 @@ public class GatewayRoutesConfig {
                         .uri("lb://eventservice"))
 
                 // Route to Analytics Service with /api/analytics prefix
+                // No rewrite needed - keep /api/analytics/** as is
                 .route("analytics-service-api", r -> r
                         .path("/api/analytics/**")
-                        .filters(f -> f.rewritePath("/api/analytics/(?<segment>.*)", "/api/${segment}"))
                         .uri("lb://analyticsservice"))
 
                 // Route to Notification Service with /api/notifications prefix
