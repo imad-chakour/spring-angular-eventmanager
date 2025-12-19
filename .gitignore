@@ -1,0 +1,95 @@
+# ============================================
+# IDE and Editor Files
+# ============================================
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# ============================================
+# Frontend - Node.js and Dependencies
+# ============================================
+frontend/node_modules/
+frontend/package-lock.json
+
+# ============================================
+# Frontend - Build Outputs and Cache
+# ============================================
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+frontend/.vite/
+
+# ============================================
+# Frontend - Generated Files
+# Keep source files (.ts, .html, .css), ignore compiled/generated
+# ============================================
+frontend/**/*.js.map
+frontend/**/*.d.ts
+frontend/**/*.ngfactory.ts
+frontend/**/*.ngsummary.json
+frontend/**/*.spec.ts.js
+frontend/**/*.spec.ts.map
+
+# ============================================
+# Backend - Maven
+# ============================================
+backend/**/target/
+backend/**/.mvn/wrapper/maven-wrapper.jar
+backend/**/mvnw
+backend/**/mvnw.cmd
+backend/**/.classpath
+backend/**/.project
+backend/**/.settings/
+
+# ============================================
+# Logs
+# ============================================
+*.log
+logs/
+*.log.*
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.local
+.env.*.local
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.temp
+*.bak
+
+# ============================================
+# Database Files
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# Compiled Files
+# ============================================
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# ============================================
+# Spring Boot Configuration
+# ============================================
+application-local.properties
+application-dev.properties
