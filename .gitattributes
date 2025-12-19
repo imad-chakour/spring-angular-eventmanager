@@ -4,19 +4,18 @@
 # ============================================
 
 # Exclure TOUT le dossier frontend du comptage GitHub
+# Cela permet à Java d'être le langage dominant
 frontend/** linguist-vendored=true
-frontend/** linguist-detectable=false
 
 # Backend - Compter normalement (Java sera dominant)
 backend/**/*.java linguist-detectable=true
-backend/**/*.java linguist-language=Java
 
-# Fichiers de configuration - Ne pas compter
+# Fichiers de configuration - Ne pas compter comme code
 *.properties linguist-generated=true
 *.xml linguist-generated=true
 *.yml linguist-generated=true
 *.yaml linguist-generated=true
-*.json linguist-generated=true
+pom.xml linguist-generated=true
 
 # SQL - Exclure du comptage principal
 *.sql linguist-vendored=true
@@ -27,11 +26,6 @@ backend/**/*.java linguist-language=Java
 **/dist/** linguist-vendored=true
 **/.angular/** linguist-vendored=true
 
-# Fichiers Maven
-**/pom.xml linguist-generated=true
-**/mvnw linguist-generated=true
-**/mvnw.cmd linguist-generated=true
-
-# Documentation
+# Documentation - Garder visible mais compter comme documentation
 *.md linguist-documentation=true
 README.md linguist-documentation=true
