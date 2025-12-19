@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { getApiUrl } from '../config/api.config';
@@ -11,8 +11,19 @@ export class UserService {
   private http = inject(HttpClient);
   private readonly apiUrl = getApiUrl('/api/users');
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
+  // Headers pour désactiver le cache HTTP
+  private readonly noCacheHeaders = new HttpHeaders({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+
+  getUsers(forceRefresh: boolean = false): Observable<User[]> {
+    // Ajouter un timestamp pour forcer le rafraîchissement
+    const url = forceRefresh 
+      ? `${this.apiUrl}?_t=${Date.now()}` 
+      : this.apiUrl;
+    return this.http.get<User[]>(url, { headers: this.noCacheHeaders });
   }
 
   getUserById(id: number): Observable<User> {

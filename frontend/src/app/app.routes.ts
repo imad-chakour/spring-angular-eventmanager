@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { EventListComponent } from './features/events/event-list.component';
 import { CampaignListComponent } from './features/campaigns/campaign-list.component';
-import { ParticipantListComponent } from './features/participants/participant-list.component';
+import { HomeComponent } from './features/home/home.component';
 import { AnalyticsOverviewComponent } from './features/analytics/analytics-overview.component';
 import { NotificationListComponent } from './features/notifications/notification-list.component';
 import { LoginComponent } from './features/users/components/login/login.component';
@@ -17,9 +17,9 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
 
   // Routes protégées
+  { path: '', component: HomeComponent, canActivate: [authGuard], pathMatch: 'full' },
   { path: 'events', component: EventListComponent, canActivate: [authGuard] },
   { path: 'campaigns', component: CampaignListComponent, canActivate: [authGuard] },
-  { path: 'participants', component: ParticipantListComponent, canActivate: [authGuard] },
   { path: 'analytics', component: AnalyticsOverviewComponent, canActivate: [authGuard] },
   { path: 'notifications', component: NotificationListComponent, canActivate: [authGuard] },
 
@@ -29,6 +29,5 @@ export const routes: Routes = [
   { path: 'users/:id/edit', component: UserFormComponent, canActivate: [adminGuard] },
 
   // Routes par défaut
-  { path: '', pathMatch: 'full', redirectTo: 'campaigns' },
-  { path: '**', redirectTo: 'campaigns', pathMatch: 'full' },
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];

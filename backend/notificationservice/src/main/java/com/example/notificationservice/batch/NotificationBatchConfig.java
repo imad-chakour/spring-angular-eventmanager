@@ -3,16 +3,17 @@ package com.example.notificationservice.batch;
 import com.example.notificationservice.model.Notification;
 import com.example.notificationservice.model.NotificationStatus;
 import com.example.notificationservice.repository.NotificationRepository;
+import com.example.notificationservice.service.EmailService;
 
-import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.infrastructure.item.ItemProcessor;
-import org.springframework.batch.infrastructure.item.ItemReader;
-import org.springframework.batch.infrastructure.item.ItemWriter;
-import org.springframework.batch.infrastructure.item.data.builder.RepositoryItemReaderBuilder;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +39,9 @@ public class NotificationBatchConfig {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
+    @Autowired
+    private EmailService emailService;
+
     /**
      * ItemReader : Lit les notifications en attente depuis la base de données
      */
@@ -62,12 +66,40 @@ public class NotificationBatchConfig {
     @Bean
     public ItemProcessor<Notification, Notification> notificationItemProcessor() {
         return notification -> {
-            // Simulation du traitement d'envoi de notification
-            // Dans un cas réel, ici on enverrait l'email/SMS/push notification
-            System.out.println("Traitement de la notification ID: " + notification.getId());
+            System.out.println("=== Batch: Traitement de la notification ID: " + notification.getId() + " ===");
             
-            // Mise à jour du statut
-            notification.setStatus(NotificationStatus.PROCESSING);
+            // Envoyer l'email si le canal est EMAIL
+            if (notification.getChannel() != null && 
+                notification.getChannel().name().equals("EMAIL") && 
+                notification.getRecipientEmail() != null && 
+                !notification.getRecipientEmail().isEmpty()) {
+                
+                boolean emailSent = emailService.sendEmail(
+                    notification.getRecipientEmail(),
+                    notification.getSubject() != null ? notification.getSubject() : "Notification EventFlow",
+                    notification.getContent() != null ? notification.getContent() : ""
+                );
+                
+                if (emailSent) {
+                    notification.setStatus(NotificationStatus.SENT);
+                    notification.setSentDate(java.time.LocalDateTime.now());
+                    notification.setDeliveryStatus("DELIVERED");
+                    System.out.println("✅ Email envoyé via batch pour notification ID: " + notification.getId());
+                } else {
+                    // En cas d'échec, incrémenter le retry count
+                    notification.setRetryCount(notification.getRetryCount() != null ? notification.getRetryCount() + 1 : 1);
+                    if (notification.getRetryCount() >= 3) {
+                        notification.setStatus(NotificationStatus.FAILED);
+                        notification.setErrorMessage("Échec après 3 tentatives");
+                    }
+                    System.out.println("⚠️ Échec de l'envoi, retry count: " + notification.getRetryCount());
+                }
+            } else {
+                // Pour les autres canaux (SMS, PUSH, etc.), on simule juste l'envoi
+                notification.setStatus(NotificationStatus.SENT);
+                notification.setSentDate(java.time.LocalDateTime.now());
+                System.out.println("✅ Notification traitée (canal non-EMAIL): " + notification.getId());
+            }
             
             return notification;
         };

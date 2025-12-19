@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.example.notificationservice.model.NotificationType;
+import com.example.notificationservice.model.NotificationChannel;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -66,6 +68,92 @@ public class NotificationController {
     @PostMapping
     public Notification createNotification(@RequestBody Notification notification) {
         return notificationService.saveNotification(notification);
+    }
+
+    /**
+     * Endpoint pour créer une notification depuis un Map (utilisé par Feign)
+     */
+    @PostMapping("/from-map")
+    public Map<String, Object> createNotificationFromMap(@RequestBody Map<String, Object> notificationMap) {
+        try {
+            Notification notification = new Notification();
+            
+            // Champs optionnels
+            if (notificationMap.get("recipientId") != null) {
+                notification.setRecipientId(Long.valueOf(notificationMap.get("recipientId").toString()));
+            }
+            if (notificationMap.get("recipientEmail") != null) {
+                notification.setRecipientEmail(notificationMap.get("recipientEmail").toString());
+            }
+            if (notificationMap.get("subject") != null) {
+                notification.setSubject(notificationMap.get("subject").toString());
+            }
+            if (notificationMap.get("content") != null) {
+                notification.setContent(notificationMap.get("content").toString());
+            }
+            if (notificationMap.get("status") != null) {
+                notification.setStatus(NotificationStatus.valueOf(notificationMap.get("status").toString()));
+            }
+            
+            // Champs OBLIGATOIRES (nullable = false dans la base)
+            if (notificationMap.get("type") == null) {
+                throw new IllegalArgumentException("Le champ 'type' est obligatoire");
+            }
+            notification.setType(NotificationType.valueOf(notificationMap.get("type").toString()));
+            
+            if (notificationMap.get("channel") == null) {
+                throw new IllegalArgumentException("Le champ 'channel' est obligatoire");
+            }
+            notification.setChannel(NotificationChannel.valueOf(notificationMap.get("channel").toString()));
+            
+            // S'assurer que retryCount n'est pas null
+            if (notification.getRetryCount() == null) {
+                notification.setRetryCount(0);
+            }
+            
+            // Log des valeurs avant sauvegarde pour debugging
+            System.out.println("=== Création de notification ===");
+            System.out.println("Type: " + notification.getType());
+            System.out.println("Channel: " + notification.getChannel());
+            System.out.println("Status: " + notification.getStatus());
+            System.out.println("RetryCount: " + notification.getRetryCount());
+            System.out.println("RecipientId: " + notification.getRecipientId());
+            System.out.println("RecipientEmail: " + notification.getRecipientEmail());
+            
+            Notification saved = notificationService.saveNotification(notification);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", saved.getId());
+            response.put("recipientId", saved.getRecipientId());
+            response.put("recipientEmail", saved.getRecipientEmail());
+            response.put("type", saved.getType());
+            response.put("channel", saved.getChannel());
+            response.put("subject", saved.getSubject());
+            response.put("status", saved.getStatus());
+            response.put("message", "Notification créée avec succès");
+            
+            System.out.println("=== Notification créée depuis Map: " + saved.getId() + " ===");
+            return response;
+        } catch (IllegalArgumentException e) {
+            System.err.println("❌ Erreur de validation: " + e.getMessage());
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Erreur de validation: " + e.getMessage());
+            error.put("message", "Vérifiez que les champs obligatoires 'type' et 'channel' sont présents et valides");
+            return error;
+        } catch (IllegalStateException e) {
+            System.err.println("❌ Erreur d'enum: " + e.getMessage());
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Erreur de valeur enum: " + e.getMessage());
+            error.put("message", "Les valeurs de 'type', 'channel' ou 'status' ne sont pas valides");
+            return error;
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors de la création de la notification depuis Map: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Erreur lors de la création de la notification: " + e.getMessage());
+            error.put("message", "Vérifiez les logs pour plus de détails");
+            return error;
+        }
     }
 
     @PutMapping("/{id}")

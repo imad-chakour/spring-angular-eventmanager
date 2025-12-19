@@ -1,5 +1,6 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.client.NotificationClient;
 import com.example.userservice.model.User;
 import com.example.userservice.security.JwtTokenProvider;
 import com.example.userservice.service.UserService;
@@ -23,15 +24,18 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationClient notificationClient;
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtTokenProvider jwtTokenProvider,
                           UserService userService,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          NotificationClient notificationClient) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.notificationClient = notificationClient;
     }
 
     @PostMapping("/login")
@@ -99,6 +103,27 @@ public class AuthController {
         // Do NOT encode here to avoid double encoding
 
         User saved = userService.saveUser(user);
+
+        // Créer une notification de bienvenue
+        try {
+            Map<String, Object> welcomeNotification = new HashMap<>();
+            welcomeNotification.put("recipientId", saved.getId());
+            welcomeNotification.put("recipientEmail", saved.getEmail());
+            welcomeNotification.put("type", "WELCOME");
+            welcomeNotification.put("channel", "EMAIL");
+            welcomeNotification.put("subject", "Bienvenue sur EventFlow !");
+            welcomeNotification.put("content", "Bonjour " + (saved.getFirstName() != null ? saved.getFirstName() : saved.getEmail()) + 
+                    ",\n\nBienvenue sur EventFlow ! Votre compte a été créé avec succès.\n\n" +
+                    "Vous pouvez maintenant vous inscrire aux événements et participer à nos activités.\n\n" +
+                    "Cordialement,\nL'équipe EventFlow");
+            welcomeNotification.put("status", "PENDING");
+            
+            notificationClient.createNotification(welcomeNotification);
+            System.out.println("=== Notification de bienvenue créée pour l'utilisateur: " + saved.getEmail() + " ===");
+        } catch (Exception e) {
+            // Ne pas faire échouer l'inscription si la notification échoue
+            System.err.println("⚠️ Erreur lors de la création de la notification de bienvenue: " + e.getMessage());
+        }
 
         // Remove password from response
         saved.setPassword(null);

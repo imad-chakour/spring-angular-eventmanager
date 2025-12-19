@@ -18,15 +18,15 @@ public class GatewayRoutesConfig {
                         .uri("lb://userservice"))
 
                 // Route to Campaign Service with /api/campaigns prefix
+                // No rewrite needed - keep /api/campaigns/** as is to match CampaignController @RequestMapping("/api/campaigns")
                 .route("campaign-service-api", r -> r
                         .path("/api/campaigns/**")
-                        .filters(f -> f.rewritePath("/api/campaigns/(?<segment>.*)", "/api/${segment}"))
                         .uri("lb://campaignservice"))
 
                 // Route to Event Service with /api/events prefix
+                // No rewrite needed - keep /api/events/** as is to match EventController @RequestMapping("/api/events")
                 .route("event-service-api", r -> r
                         .path("/api/events/**")
-                        .filters(f -> f.rewritePath("/api/events/(?<segment>.*)", "/api/${segment}"))
                         .uri("lb://eventservice"))
 
                 // Route to Analytics Service with /api/analytics prefix

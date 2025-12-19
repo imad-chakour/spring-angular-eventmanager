@@ -46,7 +46,7 @@ public class Campaign {
     @Column(name = "organizer_id", nullable = false)
     private Long organizerId;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "campaign_segments", joinColumns = @JoinColumn(name = "campaign_id"))
     @Column(name = "segment_name")
     private List<String> targetSegments = new ArrayList<>();

@@ -12,6 +12,7 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notif_seq")
     @SequenceGenerator(name = "notif_seq", sequenceName = "NOTIFICATIONS_SEQ", allocationSize = 1)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "recipient_id")
@@ -47,7 +48,7 @@ public class Notification {
     @Column(name = "error_message")
     private String errorMessage;
 
-    @Column(name = "retry_count")
+    @Column(name = "retry_count", nullable = false)
     private Integer retryCount = 0;
 
     @Column(name = "created_at")

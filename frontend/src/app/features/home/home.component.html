@@ -1,0 +1,48 @@
+<div class="home-container">
+  <div class="welcome-section">
+    <h1>Bienvenue{{ currentUser()?.firstName ? ', ' + currentUser()?.firstName : '' }} !</h1>
+    <p class="subtitle">Gérez vos événements et campagnes marketing en un seul endroit</p>
+  </div>
+
+  <div class="shortcuts-section">
+    <h2>Microservices disponibles</h2>
+    <p class="section-description">Accédez rapidement aux différents microservices de l'application</p>
+    <div class="shortcuts-grid">
+      @for (shortcut of shortcuts; track shortcut.route) {
+        <a [routerLink]="shortcut.route" class="shortcut-card" [style.border-left-color]="shortcut.color">
+          <div class="shortcut-icon" [style.background]="'linear-gradient(135deg, ' + shortcut.color + ' 0%, ' + shortcut.color + 'dd 100%)'">
+            <span>{{ shortcut.icon }}</span>
+          </div>
+          <div class="shortcut-content">
+            <h3>{{ shortcut.title }}</h3>
+            <p>{{ shortcut.description }}</p>
+            <span class="microservice-badge">{{ shortcut.service }}</span>
+          </div>
+          <div class="shortcut-arrow">→</div>
+        </a>
+      }
+    </div>
+  </div>
+
+  @if (isAdmin()) {
+    <div class="shortcuts-section">
+      <h2>Administration</h2>
+      <p class="section-description">Gestion des utilisateurs et administration du système</p>
+      <div class="shortcuts-grid">
+        @for (shortcut of adminShortcuts; track shortcut.route) {
+          <a [routerLink]="shortcut.route" class="shortcut-card" [style.border-left-color]="shortcut.color">
+            <div class="shortcut-icon" [style.background]="'linear-gradient(135deg, ' + shortcut.color + ' 0%, ' + shortcut.color + 'dd 100%)'">
+              <span>{{ shortcut.icon }}</span>
+            </div>
+            <div class="shortcut-content">
+              <h3>{{ shortcut.title }}</h3>
+              <p>{{ shortcut.description }}</p>
+              <span class="microservice-badge">{{ shortcut.service }}</span>
+            </div>
+            <div class="shortcut-arrow">→</div>
+          </a>
+        }
+      </div>
+    </div>
+  }
+</div>

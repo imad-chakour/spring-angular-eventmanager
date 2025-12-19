@@ -14,12 +14,14 @@ public class MyGlobalLogFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
         String method = exchange.getRequest().getMethod().name();
+        String uri = exchange.getRequest().getURI().toString();
 
         // Don't log actuator requests to reduce noise
         if (!path.startsWith("/actuator")) {
             System.out.println("=== Gateway Request ===");
             System.out.println("Method: " + method);
             System.out.println("Path: " + path);
+            System.out.println("URI: " + uri);
             System.out.println("======================");
         }
 

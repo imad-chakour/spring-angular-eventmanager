@@ -148,3 +148,4 @@ Authorization: Bearer <token>
 1. **Redémarrer le AnalyticsService** (port 9010)
 2. **Appeler l'endpoint de calcul** pour générer les métriques
 3. **Vérifier que les métriques s'affichent** dans le frontend
+

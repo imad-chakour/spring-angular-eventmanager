@@ -1,0 +1,1073 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Rapport Technique - EventFlow</title>
+<!--[if gte mso 9]>
+<xml>
+<w:WordDocument>
+<w:View>Print</w:View>
+<w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+</w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+    @page {
+        size: A4;
+        margin: 2cm;
+    }
+    body {
+        font-family: 'Calibri', 'Arial', sans-serif;
+        font-size: 11pt;
+        line-height: 1.5;
+        color: #333;
+    }
+    h1 {
+        font-size: 24pt;
+        color: #1a5490;
+        text-align: center;
+        border-bottom: 3px solid #1a5490;
+        padding-bottom: 10px;
+        margin-top: 20px;
+    }
+    h2 {
+        font-size: 16pt;
+        color: #1a5490;
+        border-bottom: 2px solid #4a90c2;
+        padding-bottom: 5px;
+        margin-top: 25px;
+    }
+    h3 {
+        font-size: 14pt;
+        color: #2c5282;
+        margin-top: 20px;
+    }
+    h4 {
+        font-size: 12pt;
+        color: #4a5568;
+        margin-top: 15px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 15px 0;
+        font-size: 10pt;
+    }
+    th, td {
+        border: 1px solid #ccc;
+        padding: 8px 12px;
+        text-align: left;
+    }
+    th {
+        background-color: #1a5490;
+        color: white;
+        font-weight: bold;
+    }
+    tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    .code-block {
+        background-color: #f4f4f4;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 9pt;
+        white-space: pre;
+        overflow-x: auto;
+        margin: 15px 0;
+    }
+    .highlight {
+        background-color: #fff3cd;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+    .info-box {
+        background-color: #e7f3ff;
+        border-left: 4px solid #1a5490;
+        padding: 15px;
+        margin: 15px 0;
+    }
+    .warning-box {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 15px 0;
+    }
+    ul, ol {
+        margin: 10px 0;
+        padding-left: 25px;
+    }
+    li {
+        margin: 5px 0;
+    }
+    .page-break {
+        page-break-before: always;
+    }
+    .center {
+        text-align: center;
+    }
+    .cover-page {
+        text-align: center;
+        padding-top: 150px;
+    }
+    .cover-title {
+        font-size: 36pt;
+        color: #1a5490;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .cover-subtitle {
+        font-size: 18pt;
+        color: #666;
+        margin-bottom: 50px;
+    }
+    .cover-info {
+        font-size: 14pt;
+        color: #333;
+        margin-top: 100px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Page de couverture -->
+<div class="cover-page">
+    <div class="cover-title">RAPPORT TECHNIQUE</div>
+    <div class="cover-subtitle">Projet EventFlow</div>
+    <div style="font-size: 14pt; color: #1a5490; margin: 30px 0;">
+        Architecture Microservices avec Spring Boot et Angular
+    </div>
+    <div class="cover-info">
+        <p><strong>Module :</strong> Spring Boot - 5IIR</p>
+        <p><strong>Annee Universitaire :</strong> 2024-2025</p>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- Table des matieres -->
+<h1>Table des Matieres</h1>
+
+<ol style="font-size: 12pt; line-height: 2;">
+    <li><strong>Documentation Technique</strong>
+        <ol type="a">
+            <li>Diagramme d'architecture (services + communication)</li>
+            <li>Description des endpoints principaux</li>
+            <li>Diagramme de sequence pour une fonctionnalite cle</li>
+            <li>Documentation du batch et du systeme de notifications</li>
+        </ol>
+    </li>
+    <li><strong>Resume des Technologies</strong></li>
+</ol>
+
+<div class="page-break"></div>
+
+<!-- Section 2: Documentation Technique -->
+<h1>2. Documentation Technique</h1>
+
+<!-- 2.a Diagramme d'Architecture -->
+<h2>a. Diagramme d'Architecture (Services + Communication)</h2>
+
+<h3>Vue d'ensemble de l'Architecture Microservices</h3>
+
+<p>Le projet EventFlow est base sur une architecture microservices composee de plusieurs services independants qui communiquent entre eux via des API REST et des clients Feign.</p>
+
+<h4>Services de l'Infrastructure</h4>
+
+<table>
+    <tr>
+        <th>Service</th>
+        <th>Port</th>
+        <th>Role</th>
+    </tr>
+    <tr>
+        <td><strong>Config Server</strong></td>
+        <td>8888</td>
+        <td>Centralisation de la configuration (Git Repository)</td>
+    </tr>
+    <tr>
+        <td><strong>Eureka Server</strong></td>
+        <td>8761</td>
+        <td>Service Discovery - Enregistrement et decouverte des services</td>
+    </tr>
+    <tr>
+        <td><strong>API Gateway</strong></td>
+        <td>1111</td>
+        <td>Point d'entree unique, routage, authentification JWT, CORS</td>
+    </tr>
+</table>
+
+<h4>Services Metier</h4>
+
+<table>
+    <tr>
+        <th>Service</th>
+        <th>Port</th>
+        <th>Responsabilites</th>
+    </tr>
+    <tr>
+        <td><strong>User Service</strong></td>
+        <td>7020</td>
+        <td>Authentification, gestion des utilisateurs, JWT, securite</td>
+    </tr>
+    <tr>
+        <td><strong>Event Service</strong></td>
+        <td>9030</td>
+        <td>Gestion des evenements, inscriptions, Circuit Breaker</td>
+    </tr>
+    <tr>
+        <td><strong>Campaign Service</strong></td>
+        <td>9020</td>
+        <td>Gestion des campagnes marketing, segments cibles</td>
+    </tr>
+    <tr>
+        <td><strong>Notification Service</strong></td>
+        <td>7010</td>
+        <td>Envoi d'emails, notifications, traitement batch</td>
+    </tr>
+    <tr>
+        <td><strong>Analytics Service</strong></td>
+        <td>9010</td>
+        <td>Calcul et stockage des metriques, statistiques</td>
+    </tr>
+</table>
+
+<h4>Frontend</h4>
+
+<table>
+    <tr>
+        <th>Application</th>
+        <th>Port</th>
+        <th>Technologies</th>
+    </tr>
+    <tr>
+        <td><strong>Angular Frontend</strong></td>
+        <td>4200</td>
+        <td>Angular 17+, TypeScript, RxJS, Standalone Components</td>
+    </tr>
+</table>
+
+<h3>Schema d'Architecture</h3>
+
+<div class="code-block">
++-----------------------------------------------------------------------------------+
+|                                    FRONTEND                                        |
+|                              Angular (Port 4200)                                   |
++-------------------------------------+---------------------------------------------+
+                                      | HTTP/REST
+                                      v
++-----------------------------------------------------------------------------------+
+|                           API GATEWAY (Reactive Gateway)                           |
+|                                   Port: 1111                                       |
+|   +----------------+  +----------------+  +----------------+                       |
+|   |  JWT Filter    |  |  CORS Config   |  |  Load Balancer |                       |
+|   |  (Validation)  |  |  (Global)      |  |  (lb://)       |                       |
+|   +----------------+  +----------------+  +----------------+                       |
++-------------------------------------+---------------------------------------------+
+                                      |
+        +-----------------------------+-----------------------------+
+        |                             |                             |
+        v                             v                             v
++---------------+            +---------------+            +---------------+
+| CONFIG SERVER |            | EUREKA SERVER |            |   SERVICES    |
+|   Port: 8888  |<---------->|   Port: 8761  |<---------->|   (Metier)    |
+|   (Git Repo)  |            | (Discovery)   |            |               |
++---------------+            +---------------+            +---------------+
+                                                                  |
+        +-----------+-----------+-----------+------------+--------+--------+
+        |           |           |           |            |                 |
+        v           v           v           v            v                 v
++----------+ +----------+ +----------+ +----------+ +----------+
+|   USER   | |  EVENT   | | CAMPAIGN | |NOTIFICA- | | ANALYTICS|
+| SERVICE  | | SERVICE  | | SERVICE  | |  TION    | | SERVICE  |
+|Port:7020 | |Port:9030 | |Port:9020 | |Port:7010 | |Port:9010 |
++----------+ +----------+ +----------+ +----------+ +----------+
+</div>
+
+<h3>Communication Inter-Services (Feign Clients)</h3>
+
+<p>Les services communiquent entre eux via des clients Feign pour effectuer des operations transversales :</p>
+
+<table>
+    <tr>
+        <th>Service Source</th>
+        <th>Service Cible</th>
+        <th>Utilisation</th>
+    </tr>
+    <tr>
+        <td>User Service</td>
+        <td>Notification Service</td>
+        <td>Notification de bienvenue lors de l'inscription</td>
+    </tr>
+    <tr>
+        <td>Event Service</td>
+        <td>User Service</td>
+        <td>Validation de l'organisateur et des participants</td>
+    </tr>
+    <tr>
+        <td>Event Service</td>
+        <td>Notification Service</td>
+        <td>Confirmation d'inscription aux evenements</td>
+    </tr>
+    <tr>
+        <td>Campaign Service</td>
+        <td>User Service</td>
+        <td>Validation de l'organisateur de campagne</td>
+    </tr>
+    <tr>
+        <td>Analytics Service</td>
+        <td>Event Service</td>
+        <td>Recuperation des donnees evenements pour metriques</td>
+    </tr>
+    <tr>
+        <td>Analytics Service</td>
+        <td>Campaign Service</td>
+        <td>Recuperation des donnees campagnes pour metriques</td>
+    </tr>
+    <tr>
+        <td>Notification Service</td>
+        <td>User Service</td>
+        <td>Validation du destinataire de notification</td>
+    </tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- 2.b Description des Endpoints -->
+<h2>b. Description des Endpoints Principaux</h2>
+
+<h3>1. User Service - /api/users (Port 7020)</h3>
+
+<p>Service responsable de l'authentification et de la gestion des utilisateurs.</p>
+
+<table>
+    <tr>
+        <th>Methode</th>
+        <th>Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/users/login</td>
+        <td>Authentification utilisateur (retourne un token JWT)</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/users/register</td>
+        <td>Inscription d'un nouvel utilisateur</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/users</td>
+        <td>Liste tous les utilisateurs</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/users/{id}</td>
+        <td>Recupere un utilisateur par son ID</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/users/email/{email}</td>
+        <td>Recupere un utilisateur par son email</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/users</td>
+        <td>Cree un nouvel utilisateur</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">PUT</span></td>
+        <td>/api/users/{id}</td>
+        <td>Met a jour un utilisateur existant</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">DELETE</span></td>
+        <td>/api/users/{id}</td>
+        <td>Supprime un utilisateur</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">PATCH</span></td>
+        <td>/api/users/{id}/last-login</td>
+        <td>Met a jour la date de derniere connexion</td>
+    </tr>
+</table>
+
+<h3>2. Event Service - /api/events (Port 9030)</h3>
+
+<p>Service de gestion des evenements avec support Circuit Breaker (Resilience4j).</p>
+
+<table>
+    <tr>
+        <th>Methode</th>
+        <th>Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/events</td>
+        <td>Liste tous les evenements (avec Circuit Breaker)</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/events/{id}</td>
+        <td>Recupere un evenement par son ID</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/events/organizer/{organizerId}</td>
+        <td>Evenements par organisateur</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/events/status/{status}</td>
+        <td>Evenements par statut</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/events</td>
+        <td>Cree un nouvel evenement</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">PUT</span></td>
+        <td>/api/events/{id}</td>
+        <td>Met a jour un evenement</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">PATCH</span></td>
+        <td>/api/events/{id}/close</td>
+        <td>Cloture un evenement</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">DELETE</span></td>
+        <td>/api/events/{id}</td>
+        <td>Supprime un evenement</td>
+    </tr>
+</table>
+
+<h4>Endpoints d'Inscription aux Evenements</h4>
+
+<table>
+    <tr>
+        <th>Methode</th>
+        <th>Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/events/registrations</td>
+        <td>Liste toutes les inscriptions</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/events/registrations/event/{eventId}</td>
+        <td>Inscriptions par evenement</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/events/registrations/user/{userId}</td>
+        <td>Inscriptions par utilisateur</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/events/registrations/event/{eventId}/user/{userId}</td>
+        <td>Inscrire un utilisateur a un evenement</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">DELETE</span></td>
+        <td>/api/events/registrations/{id}</td>
+        <td>Supprimer une inscription</td>
+    </tr>
+</table>
+
+<h3>3. Campaign Service - /api/campaigns (Port 9020)</h3>
+
+<p>Service de gestion des campagnes marketing.</p>
+
+<table>
+    <tr>
+        <th>Methode</th>
+        <th>Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/campaigns</td>
+        <td>Liste toutes les campagnes</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/campaigns/{id}</td>
+        <td>Recupere une campagne par ID</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/campaigns/organizer/{organizerId}</td>
+        <td>Campagnes par organisateur</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/campaigns/status/{status}</td>
+        <td>Campagnes par statut</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/campaigns</td>
+        <td>Cree une nouvelle campagne</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">PUT</span></td>
+        <td>/api/campaigns/{id}</td>
+        <td>Met a jour une campagne</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">PATCH</span></td>
+        <td>/api/campaigns/{id}/status/{status}</td>
+        <td>Change le statut d'une campagne</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">DELETE</span></td>
+        <td>/api/campaigns/{id}</td>
+        <td>Supprime une campagne</td>
+    </tr>
+</table>
+
+<h3>4. Notification Service - /api/notifications (Port 7010)</h3>
+
+<p>Service de gestion des notifications avec support batch et envoi d'emails.</p>
+
+<table>
+    <tr>
+        <th>Methode</th>
+        <th>Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/notifications</td>
+        <td>Liste toutes les notifications (avec Circuit Breaker)</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/notifications/{id}</td>
+        <td>Recupere une notification par ID</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/notifications/status/{status}</td>
+        <td>Notifications par statut</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/notifications/recipient/{recipientId}</td>
+        <td>Notifications par destinataire</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/notifications</td>
+        <td>Cree une notification</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/notifications/from-map</td>
+        <td>Cree notification (format Map pour Feign)</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">PUT</span></td>
+        <td>/api/notifications/{id}</td>
+        <td>Met a jour une notification</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">PATCH</span></td>
+        <td>/api/notifications/{id}/status/{status}</td>
+        <td>Change le statut</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">DELETE</span></td>
+        <td>/api/notifications/{id}</td>
+        <td>Supprime une notification</td>
+    </tr>
+    <tr style="background-color: #e7f3ff;">
+        <td><span class="highlight">POST</span></td>
+        <td><strong>/api/notifications/batch/process</strong></td>
+        <td><strong>Declenche le job batch de traitement</strong></td>
+    </tr>
+</table>
+
+<h3>5. Analytics Service - /api/analytics (Port 9010)</h3>
+
+<p>Service de calcul et stockage des metriques et statistiques.</p>
+
+<table>
+    <tr>
+        <th>Methode</th>
+        <th>Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/analytics/campaigns</td>
+        <td>Metriques des campagnes</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/analytics/campaigns/{campaignId}</td>
+        <td>Metriques d'une campagne specifique</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/analytics/campaigns</td>
+        <td>Cree des metriques campagne</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/analytics/campaigns/calculate</td>
+        <td>Calcule les metriques campagnes</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/analytics/events</td>
+        <td>Metriques des evenements</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">GET</span></td>
+        <td>/api/analytics/events/{eventId}</td>
+        <td>Metriques d'un evenement specifique</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/analytics/events</td>
+        <td>Cree des metriques evenement</td>
+    </tr>
+    <tr>
+        <td><span class="highlight">POST</span></td>
+        <td>/api/analytics/events/calculate</td>
+        <td>Calcule les metriques evenements</td>
+    </tr>
+    <tr style="background-color: #e7f3ff;">
+        <td><span class="highlight">POST</span></td>
+        <td><strong>/api/analytics/calculate-all</strong></td>
+        <td><strong>Calcule toutes les metriques</strong></td>
+    </tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- 2.c Diagramme de Sequence -->
+<h2>c. Diagramme de Sequence - Inscription a un Evenement</h2>
+
+<p>Ce diagramme illustre le flux complet d'inscription d'un utilisateur a un evenement, incluant la validation, la creation de l'inscription et l'envoi de la notification de confirmation.</p>
+
+<h3>Description du Flux</h3>
+
+<div class="code-block">
++----------+     +---------+     +-------------+     +------------+     +------------------+
+| Frontend |     | Gateway |     |EventService |     |UserService |     |NotificationService|
++----+-----+     +----+----+     +------+------+     +-----+------+     +--------+---------+
+     |                |                 |                  |                     |
+     | 1. POST /api/events/registrations/event/{eventId}/user/{userId}           |
+     |---------------->                 |                  |                     |
+     |                |                 |                  |                     |
+     |                | 2. Valide JWT   |                  |                     |
+     |                | & Route request |                  |                     |
+     |                |---------------->|                  |                     |
+     |                |                 |                  |                     |
+     |                |                 | 3. GET /api/users/{userId}             |
+     |                |                 |  (Feign Client)  |                     |
+     |                |                 |----------------->|                     |
+     |                |                 |                  |                     |
+     |                |                 | 4. Return User   |                     |
+     |                |                 |<-----------------|                     |
+     |                |                 |                  |                     |
+     |                |                 | 5. Verifie:                            |
+     |                |                 |    - Event existe                      |
+     |                |                 |    - Capacite disponible               |
+     |                |                 |    - User pas deja inscrit             |
+     |                |                 |                  |                     |
+     |                |                 | 6. Cree Registration                   |
+     |                |                 |    & Update currentParticipants        |
+     |                |                 |                  |                     |
+     |                |                 | 7. POST /api/notifications/from-map    |
+     |                |                 |  (Feign - Notification de confirmation)|
+     |                |                 |-------------------------------------->|
+     |                |                 |                  |                     |
+     |                |                 |                  |    8. Cree Notif    |
+     |                |                 |                  |    & Envoie Email   |
+     |                |                 |                  |                     |
+     |                |                 | 9. Return Notif  |                     |
+     |                |                 |<--------------------------------------|
+     |                |                 |                  |                     |
+     |                | 10. Return Registration            |                     |
+     |                |<----------------|                  |                     |
+     |                |                 |                  |                     |
+     | 11. 200 OK + Registration data   |                  |                     |
+     |<----------------|                 |                  |                     |
+     |                |                 |                  |                     |
+</div>
+
+<h3>Etapes Detaillees</h3>
+
+<table>
+    <tr>
+        <th>Etape</th>
+        <th>Action</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Requete Frontend</td>
+        <td>L'utilisateur clique sur "S'inscrire" dans l'interface Angular</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Validation Gateway</td>
+        <td>Le Gateway valide le token JWT et route vers EventService</td>
+    </tr>
+    <tr>
+        <td>3-4</td>
+        <td>Validation Utilisateur</td>
+        <td>EventService appelle UserService via Feign pour valider l'existence de l'utilisateur</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Verifications Metier</td>
+        <td>Verifie que l'evenement existe, a de la capacite, et que l'utilisateur n'est pas deja inscrit</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>Creation Inscription</td>
+        <td>Cree l'inscription en base et incremente le compteur de participants</td>
+    </tr>
+    <tr>
+        <td>7-9</td>
+        <td>Notification</td>
+        <td>Appelle NotificationService pour creer et envoyer un email de confirmation</td>
+    </tr>
+    <tr>
+        <td>10-11</td>
+        <td>Reponse</td>
+        <td>Retourne les donnees d'inscription au frontend</td>
+    </tr>
+</table>
+
+<div class="page-break"></div>
+
+<!-- 2.d Documentation Batch et Notifications -->
+<h2>d. Documentation du Batch et du Systeme de Notifications</h2>
+
+<h3>Systeme de Notifications</h3>
+
+<h4>Architecture du Service</h4>
+
+<div class="code-block">
++-------------------------------------------------------------------------+
+|                     NOTIFICATION SERVICE (Port 7010)                     |
++-------------------------------------------------------------------------+
+|                                                                         |
+|  +----------------+    +----------------+    +----------------+          |
+|  |  Controller    |    |  Service       |    |  Repository    |          |
+|  |  (REST API)    |--->|  (Logique)     |--->|  (JPA/DB)      |          |
+|  +----------------+    +-------+--------+    +----------------+          |
+|                                |                                         |
+|                                v                                         |
+|                        +----------------+                                |
+|                        |  EmailService  |                                |
+|                        |  (SMTP/Gmail)  |                                |
+|                        +----------------+                                |
+|                                                                         |
+|  +---------------------------------------------------------------+      |
+|  |                    SPRING BATCH                                |      |
+|  |  +----------+    +--------------+    +--------------+          |      |
+|  |  |  Reader  |--->|  Processor   |--->|   Writer     |          |      |
+|  |  | (PENDING)|    | (Send Email) |    | (Save DB)    |          |      |
+|  |  +----------+    +--------------+    +--------------+          |      |
+|  +---------------------------------------------------------------+      |
+|                                                                         |
++-------------------------------------------------------------------------+
+</div>
+
+<h4>Types de Notifications</h4>
+
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Declencheur</th>
+    </tr>
+    <tr>
+        <td><strong>WELCOME</strong></td>
+        <td>Message de bienvenue</td>
+        <td>Inscription d'un nouvel utilisateur</td>
+    </tr>
+    <tr>
+        <td><strong>EVENT_REGISTRATION</strong></td>
+        <td>Confirmation d'inscription</td>
+        <td>Inscription a un evenement</td>
+    </tr>
+    <tr>
+        <td><strong>EVENT_REMINDER</strong></td>
+        <td>Rappel d'evenement</td>
+        <td>Batch planifie (avant evenement)</td>
+    </tr>
+    <tr>
+        <td><strong>CAMPAIGN_UPDATE</strong></td>
+        <td>Mise a jour de campagne</td>
+        <td>Modification d'une campagne</td>
+    </tr>
+    <tr>
+        <td><strong>SYSTEM_ALERT</strong></td>
+        <td>Alerte systeme</td>
+        <td>Erreurs ou maintenance</td>
+    </tr>
+</table>
+
+<h4>Canaux de Notification</h4>
+
+<table>
+    <tr>
+        <th>Canal</th>
+        <th>Implementation</th>
+        <th>Statut</th>
+    </tr>
+    <tr>
+        <td><strong>EMAIL</strong></td>
+        <td>SMTP via JavaMailSender (Gmail)</td>
+        <td>Operationnel</td>
+    </tr>
+    <tr>
+        <td><strong>SMS</strong></td>
+        <td>Simule (pret pour integration Twilio)</td>
+        <td>Simule</td>
+    </tr>
+    <tr>
+        <td><strong>PUSH</strong></td>
+        <td>Simule (pret pour integration Firebase)</td>
+        <td>Simule</td>
+    </tr>
+    <tr>
+        <td><strong>IN_APP</strong></td>
+        <td>Stocke en base pour affichage</td>
+        <td>Operationnel</td>
+    </tr>
+</table>
+
+<h4>Statuts des Notifications</h4>
+
+<table>
+    <tr>
+        <th>Statut</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><strong>PENDING</strong></td>
+        <td>En attente d'envoi</td>
+    </tr>
+    <tr>
+        <td><strong>SENT</strong></td>
+        <td>Envoyee avec succes</td>
+    </tr>
+    <tr>
+        <td><strong>FAILED</strong></td>
+        <td>Echec apres 3 tentatives</td>
+    </tr>
+    <tr>
+        <td><strong>READ</strong></td>
+        <td>Lue par le destinataire</td>
+    </tr>
+</table>
+
+<h3>Systeme Batch (Spring Batch)</h3>
+
+<h4>Configuration</h4>
+
+<div class="code-block">
+# application.properties - Notification Service
+
+# Desactive le demarrage automatique des jobs
+spring.batch.job.enabled=false
+
+# Initialise le schema batch en base
+spring.batch.jdbc.initialize-schema=always
+
+# Configuration Email (Gmail SMTP)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=chakourimad01@gmail.com
+spring.mail.password=${MAIL_PASSWORD}
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+</div>
+
+<h4>Architecture du Job Batch</h4>
+
+<div class="info-box">
+<strong>Job:</strong> processNotificationJob<br>
+<strong>Step:</strong> processNotificationStep (chunk size = 10)
+</div>
+
+<table>
+    <tr>
+        <th>Composant</th>
+        <th>Role</th>
+        <th>Configuration</th>
+    </tr>
+    <tr>
+        <td><strong>ItemReader</strong></td>
+        <td>Lit les notifications en statut PENDING</td>
+        <td>Page size = 100, Tri par ID ascendant</td>
+    </tr>
+    <tr>
+        <td><strong>ItemProcessor</strong></td>
+        <td>Traite chaque notification (envoi email)</td>
+        <td>Retry count max = 3</td>
+    </tr>
+    <tr>
+        <td><strong>ItemWriter</strong></td>
+        <td>Sauvegarde les notifications traitees</td>
+        <td>Chunk size = 10</td>
+    </tr>
+</table>
+
+<h4>Flux de Traitement du Batch</h4>
+
+<div class="code-block">
++-------------------------------------------------------------------+
+|                    processNotificationJob                          |
++-------------------------------------------------------------------+
+|                                                                   |
+|   +-----------------------------------------------------------+   |
+|   |                  processNotificationStep                   |   |
+|   |                    (chunk size = 10)                       |   |
+|   +-----------------------------------------------------------+   |
+|   |                                                            |   |
+|   |  +----------------+                                        |   |
+|   |  |   ItemReader   |  - Lit les notifications PENDING       |   |
+|   |  |                |  - Page size = 100                     |   |
+|   |  |                |  - Tri par ID ascendant                |   |
+|   |  +-------+--------+                                        |   |
+|   |          |                                                 |   |
+|   |          v                                                 |   |
+|   |  +----------------+                                        |   |
+|   |  | ItemProcessor  |  - Pour canal EMAIL:                   |   |
+|   |  |                |    * Appelle EmailService.sendEmail()  |   |
+|   |  |                |    * Si succes: status = SENT          |   |
+|   |  |                |    * Si echec: retryCount++            |   |
+|   |  |                |    * Si retryCount >= 3: FAILED        |   |
+|   |  |                |  - Pour autres canaux:                 |   |
+|   |  |                |    * Simule l'envoi, status = SENT     |   |
+|   |  +-------+--------+                                        |   |
+|   |          |                                                 |   |
+|   |          v                                                 |   |
+|   |  +----------------+                                        |   |
+|   |  |  ItemWriter    |  - Sauvegarde les notifications        |   |
+|   |  |                |  - Met a jour sentDate, deliveryStatus |   |
+|   |  +----------------+                                        |   |
+|   |                                                            |   |
+|   +-----------------------------------------------------------+   |
+|                                                                   |
++-------------------------------------------------------------------+
+</div>
+
+<h4>Declenchement du Batch</h4>
+
+<p>Le job batch peut etre declenche manuellement via l'API REST :</p>
+
+<div class="code-block">
+# Requete
+POST http://localhost:1111/api/notifications/batch/process
+
+# Reponse succes
+{
+  "status": "success",
+  "message": "Batch job 'processNotificationJob' has been triggered successfully"
+}
+
+# Reponse erreur
+{
+  "status": "error",
+  "message": "Failed to trigger batch job: [message d'erreur]"
+}
+</div>
+
+<h4>Flux d'Execution Detaille</h4>
+
+<ol>
+    <li><strong>Declenchement</strong> : Appel POST /api/notifications/batch/process</li>
+    <li><strong>Lecture</strong> : ItemReader recupere les notifications PENDING (100 par page)</li>
+    <li><strong>Traitement</strong> : ItemProcessor envoie les emails (par lots de 10)</li>
+    <li><strong>Ecriture</strong> : ItemWriter sauvegarde les statuts mis a jour</li>
+    <li><strong>Retry</strong> : Les notifications en echec sont retraitees (max 3 fois)</li>
+</ol>
+
+<div class="warning-box">
+<strong>Note importante :</strong> Pour utiliser l'envoi d'emails via Gmail, vous devez configurer un "Mot de passe d'application" (16 caracteres) et non pas votre mot de passe Gmail standard. L'authentification a deux facteurs doit etre activee sur votre compte Google.
+</div>
+
+<div class="page-break"></div>
+
+<!-- Resume des Technologies -->
+<h1>Resume des Technologies Utilisees</h1>
+
+<table>
+    <tr>
+        <th>Categorie</th>
+        <th>Technologies</th>
+    </tr>
+    <tr>
+        <td><strong>Backend</strong></td>
+        <td>Spring Boot 3.x, Spring Cloud, Spring Security, Spring Batch, Spring Data JPA</td>
+    </tr>
+    <tr>
+        <td><strong>Frontend</strong></td>
+        <td>Angular 17+, TypeScript, RxJS, Standalone Components</td>
+    </tr>
+    <tr>
+        <td><strong>API Gateway</strong></td>
+        <td>Spring Cloud Gateway (Reactive WebFlux)</td>
+    </tr>
+    <tr>
+        <td><strong>Service Discovery</strong></td>
+        <td>Netflix Eureka</td>
+    </tr>
+    <tr>
+        <td><strong>Configuration</strong></td>
+        <td>Spring Cloud Config Server (Git Repository)</td>
+    </tr>
+    <tr>
+        <td><strong>Communication Inter-Services</strong></td>
+        <td>OpenFeign, REST API</td>
+    </tr>
+    <tr>
+        <td><strong>Securite</strong></td>
+        <td>JWT (JSON Web Token), Spring Security</td>
+    </tr>
+    <tr>
+        <td><strong>Resilience</strong></td>
+        <td>Resilience4j (Circuit Breaker, Retry)</td>
+    </tr>
+    <tr>
+        <td><strong>Email</strong></td>
+        <td>Spring Mail (JavaMailSender), SMTP Gmail</td>
+    </tr>
+    <tr>
+        <td><strong>Traitement Batch</strong></td>
+        <td>Spring Batch</td>
+    </tr>
+    <tr>
+        <td><strong>Base de Donnees</strong></td>
+        <td>H2 (developpement), Oracle (production)</td>
+    </tr>
+    <tr>
+        <td><strong>Build</strong></td>
+        <td>Maven, npm</td>
+    </tr>
+</table>
+
+<div style="margin-top: 50px; text-align: center; color: #666;">
+    <p>--- Fin du Rapport Technique ---</p>
+</div>
+
+</body>
+</html>

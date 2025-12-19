@@ -29,11 +29,11 @@ export class UserListComponent implements OnInit {
     this.loadUsers();
   }
 
-  loadUsers(): void {
+  loadUsers(forceRefresh: boolean = false): void {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.userService.getUsers().subscribe({
+    this.userService.getUsers(forceRefresh).subscribe({
       next: (users) => {
         console.log('Users loaded:', users);
         // Ensure users is an array
@@ -57,6 +57,11 @@ export class UserListComponent implements OnInit {
         this.isLoading.set(false);
       }
     });
+  }
+
+  refreshUsers(): void {
+    console.log('🔄 Rafraîchissement forcé de la liste des utilisateurs...');
+    this.loadUsers(true);
   }
 
   deleteUser(id: number | undefined, email: string): void {

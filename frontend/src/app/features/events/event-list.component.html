@@ -1,10 +1,28 @@
 <div class="event-list-container">
   <div class="header">
     <h1>Gestion des Événements</h1>
-    <button class="btn btn-primary" routerLink="/events/new">
-      <span>+ Nouvel Événement</span>
-    </button>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="loadEvents()" [disabled]="isLoading()" title="Rafraîchir">
+        <span>🔄 Rafraîchir</span>
+      </button>
+      <button class="btn btn-primary" (click)="startCreate()">
+        <span>+ Nouvel Événement</span>
+      </button>
+    </div>
   </div>
+
+  <!-- Event Form (when creating/editing) -->
+  @if (isCreating() || selectedEvent()) {
+    <div class="form-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+      <div class="form-container" style="background: white; padding: 24px; border-radius: 8px; max-width: 800px; max-height: 90vh; overflow-y: auto;">
+        <app-event-form
+          [event]="selectedEvent()"
+          (cancel)="onFormCancel()"
+          (submit)="onFormSubmit()"
+        ></app-event-form>
+      </div>
+    </div>
+  }
 
   @if (errorMessage()) {
     <div class="alert alert-error">
@@ -61,9 +79,29 @@
                   </span>
                 </td>
                 <td class="actions">
+                  @if (canRegister(event)) {
+                    <button
+                      class="btn-icon btn-register"
+                      (click)="registerForEvent(event)"
+                      title="S'inscrire"
+                      style="background: #4CAF50; color: white; border: none; padding: 0.5rem; border-radius: 4px; cursor: pointer; margin-right: 0.5rem;"
+                    >
+                      ✓ S'inscrire
+                    </button>
+                  } @else {
+                    <span style="color: #999; font-size: 0.9em;">
+                      @if (event.maxCapacity && event.currentParticipants && event.currentParticipants >= event.maxCapacity) {
+                        Complet
+                      } @else if (event.status === 'TERMINE' || event.status === 'ANNULE' || event.status === 'CLOTURE') {
+                        Terminé
+                      } @else {
+                        Non disponible
+                      }
+                    </span>
+                  }
                   <button
                     class="btn-icon btn-edit"
-                    [routerLink]="['/events', event.id, 'edit']"
+                    (click)="editEvent(event)"
                     title="Modifier"
                   >
                     ✏️

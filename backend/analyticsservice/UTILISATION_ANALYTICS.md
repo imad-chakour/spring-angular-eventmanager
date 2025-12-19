@@ -82,3 +82,4 @@ Authorization: Bearer <token>
 2. **S'assurer que des campagnes et événements existent**
 3. **Appeler `/calculate-all` ou utiliser le bouton dans le frontend**
 4. **Vérifier que les métriques s'affichent**
+

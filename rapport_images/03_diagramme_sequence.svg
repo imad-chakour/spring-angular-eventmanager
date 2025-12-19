@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 750" width="1100" height="750">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a5490;stop-opacity:1" />
+    </linearGradient>
+    <marker id="arrowMsg" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2D3748"/>
+    </marker>
+    <marker id="arrowReturn" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#718096"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <rect width="1100" height="750" fill="#f8fafc"/>
+  
+  <text x="550" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1a365d">Diagramme de Sequence - Inscription a un Evenement</text>
+  
+  <rect x="40" y="60" width="100" height="50" rx="8" fill="url(#headerGrad)" filter="url(#shadow)"/>
+  <text x="90" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Frontend</text>
+  
+  <rect x="190" y="60" width="100" height="50" rx="8" fill="#ED8936" filter="url(#shadow)"/>
+  <text x="240" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Gateway</text>
+  
+  <rect x="340" y="60" width="120" height="50" rx="8" fill="#48BB78" filter="url(#shadow)"/>
+  <text x="400" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Event Service</text>
+  
+  <rect x="510" y="60" width="110" height="50" rx="8" fill="#9F7AEA" filter="url(#shadow)"/>
+  <text x="565" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">User Service</text>
+  
+  <rect x="670" y="60" width="130" height="50" rx="8" fill="#FC8181" filter="url(#shadow)"/>
+  <text x="735" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Notification</text>
+  
+  <rect x="860" y="60" width="100" height="50" rx="8" fill="#A0AEC0" filter="url(#shadow)"/>
+  <text x="910" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Database</text>
+  
+  <line x1="90" y1="110" x2="90" y2="700" stroke="#CBD5E0" stroke-width="2" stroke-dasharray="8,4"/>
+  <line x1="240" y1="110" x2="240" y2="700" stroke="#CBD5E0" stroke-width="2" stroke-dasharray="8,4"/>
+  <line x1="400" y1="110" x2="400" y2="700" stroke="#CBD5E0" stroke-width="2" stroke-dasharray="8,4"/>
+  <line x1="565" y1="110" x2="565" y2="700" stroke="#CBD5E0" stroke-width="2" stroke-dasharray="8,4"/>
+  <line x1="735" y1="110" x2="735" y2="700" stroke="#CBD5E0" stroke-width="2" stroke-dasharray="8,4"/>
+  <line x1="910" y1="110" x2="910" y2="700" stroke="#CBD5E0" stroke-width="2" stroke-dasharray="8,4"/>
+  
+  <rect x="83" y="130" width="14" height="40" fill="#4A90D9"/>
+  <line x1="90" y1="150" x2="230" y2="150" stroke="#2D3748" stroke-width="2" marker-end="url(#arrowMsg)"/>
+  <text x="160" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#2D3748">1. POST /api/events/registrations</text>
+  <text x="160" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#718096">/event/{eventId}/user/{userId}</text>
+  
+  <rect x="233" y="180" width="14" height="30" fill="#ED8936"/>
+  <text x="310" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#2D3748">2. Validation JWT</text>
+  
+  <line x1="240" y1="220" x2="390" y2="220" stroke="#2D3748" stroke-width="2" marker-end="url(#arrowMsg)"/>
+  <text x="315" y="213" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#2D3748">3. Route request (lb://)</text>
+  
+  <rect x="393" y="240" width="14" height="80" fill="#48BB78"/>
+  <line x1="400" y1="260" x2="555" y2="260" stroke="#2D3748" stroke-width="2" marker-end="url(#arrowMsg)"/>
+  <text x="477" y="253" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#2D3748">4. GET /api/users/{userId}</text>
+  <text x="477" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#718096">(Feign Client)</text>
+  
+  <rect x="558" y="260" width="14" height="40" fill="#9F7AEA"/>
+  <line x1="565" y1="300" x2="410" y2="300" stroke="#718096" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowReturn)"/>
+  <text x="487" y="313" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#718096">5. Return User data</text>
+  
+  <rect x="393" y="330" width="14" height="50" fill="#48BB78"/>
+  <rect x="420" y="340" width="180" height="35" rx="5" fill="#E6FFFA" stroke="#38B2AC" stroke-width="1"/>
+  <text x="510" y="355" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#2D3748">6. Validations:</text>
+  <text x="510" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#718096">Event exists | Capacity | Not registered</text>
+  
+  <line x1="400" y1="400" x2="900" y2="400" stroke="#2D3748" stroke-width="2" marker-end="url(#arrowMsg)"/>
+  <text x="650" y="393" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#2D3748">7. INSERT Registration</text>
+  
+  <rect x="903" y="400" width="14" height="30" fill="#A0AEC0"/>
+  <line x1="910" y1="430" x2="410" y2="430" stroke="#718096" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowReturn)"/>
+  <text x="660" y="443" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#718096">8. Registration saved (ID)</text>
+  
+  <line x1="400" y1="460" x2="900" y2="460" stroke="#2D3748" stroke-width="2" marker-end="url(#arrowMsg)"/>
+  <text x="650" y="453" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#2D3748">9. UPDATE currentParticipants++</text>
+  
+  <rect x="393" y="480" width="14" height="60" fill="#48BB78"/>
+  <line x1="400" y1="500" x2="725" y2="500" stroke="#2D3748" stroke-width="2" marker-end="url(#arrowMsg)"/>
+  <text x="562" y="493" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#2D3748">10. POST /api/notifications/from-map</text>
+  <text x="562" y="515" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#718096">(Feign - Confirmation email)</text>
+  
+  <rect x="728" y="520" width="14" height="50" fill="#FC8181"/>
+  <rect x="755" y="530" width="130" height="30" rx="5" fill="#FED7D7" stroke="#FC8181" stroke-width="1"/>
+  <text x="820" y="548" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#2D3748">11. Create Notification</text>
+  <text x="820" y="558" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#718096">and Send Email (SMTP)</text>
+  
+  <line x1="735" y1="580" x2="410" y2="580" stroke="#718096" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowReturn)"/>
+  <text x="572" y="593" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#718096">12. Return Notification</text>
+  
+  <line x1="400" y1="610" x2="250" y2="610" stroke="#718096" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowReturn)"/>
+  <text x="325" y="623" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#718096">13. Return Registration</text>
+  
+  <line x1="240" y1="640" x2="100" y2="640" stroke="#718096" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowReturn)"/>
+  <text x="170" y="653" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#718096">14. 200 OK + Data</text>
+  
+  <rect x="40" y="660" width="100" height="35" rx="8" fill="#C6F6D5" stroke="#38A169" stroke-width="2"/>
+  <text x="90" y="682" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#276749">SUCCESS</text>
+  
+  <rect x="850" y="650" width="200" height="90" rx="8" fill="white" stroke="#CBD5E0" stroke-width="1"/>
+  <text x="950" y="672" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4A5568">Legende</text>
+  <line x1="865" y1="690" x2="905" y2="690" stroke="#2D3748" stroke-width="2" marker-end="url(#arrowMsg)"/>
+  <text x="920" y="694" font-family="Arial, sans-serif" font-size="9" fill="#4A5568">Request</text>
+  <line x1="865" y1="710" x2="905" y2="710" stroke="#718096" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowReturn)"/>
+  <text x="920" y="714" font-family="Arial, sans-serif" font-size="9" fill="#4A5568">Response</text>
+  <rect x="865" y="722" width="40" height="10" fill="#48BB78"/>
+  <text x="920" y="732" font-family="Arial, sans-serif" font-size="9" fill="#4A5568">Activation</text>
+</svg>

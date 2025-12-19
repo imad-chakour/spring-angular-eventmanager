@@ -114,6 +114,7 @@ export class CampaignListComponent implements OnInit, OnDestroy {
       filtered = filtered.filter(c => c.status === this.selectedStatus);
       console.log('After status filter:', filtered.length);
     }
+    // Note: Plus besoin d'exclure ARCHIVE car les campagnes sont maintenant supprimées définitivement
 
     // Filter by search query
     if (this.searchQuery.trim()) {
@@ -149,14 +150,40 @@ export class CampaignListComponent implements OnInit, OnDestroy {
   }
 
   deleteCampaign(campaign: Campaign): void {
-    if (confirm(`Are you sure you want to delete campaign "${campaign.name}"?`)) {
+    if (confirm(`⚠ ATTENTION : Êtes-vous sûr de vouloir SUPPRIMER DÉFINITIVEMENT la campagne "${campaign.name}" ?\n\nCette action est irréversible. La campagne sera supprimée de la base de données.`)) {
+      console.log('=== Suppression définitive de campagne ===');
+      console.log('Campaign ID:', campaign.id);
+      console.log('Campaign Name:', campaign.name);
+      
       this.campaignService.deleteCampaign(campaign.id).subscribe({
         next: () => {
+          console.log('Campagne supprimée définitivement avec succès');
+          // Recharger la liste pour mettre à jour l'affichage
           this.loadCampaigns();
         },
         error: (error) => {
-          console.error('Error deleting campaign:', error);
-          alert('Failed to delete campaign. Please try again.');
+          console.error('=== Erreur lors de la suppression de la campagne ===');
+          console.error('Error details:', {
+            status: error.status,
+            statusText: error.statusText,
+            message: error.message,
+            error: error.error
+          });
+          
+          let errorMsg = 'Échec de la suppression de la campagne';
+          if (error.error) {
+            if (error.error.message) {
+              errorMsg = error.error.message;
+            } else if (typeof error.error === 'string') {
+              errorMsg = error.error;
+            } else if (error.error.error) {
+              errorMsg = error.error.error + (error.error.message ? ': ' + error.error.message : '');
+            }
+          } else if (error.message) {
+            errorMsg = error.message;
+          }
+          
+          alert(`Erreur: ${errorMsg}`);
         }
       });
     }

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <linearGradient id="phase1Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667EEA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764BA2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="phase2Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#11998E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38EF7D;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="phase3Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FC466B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3F5EFB;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="phase4Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F2994A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F2C94C;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="phase5Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0575E6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#021B79;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="3" stdDeviation="4" flood-opacity="0.25"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4A5568"/>
+    </marker>
+  </defs>
+  
+  <rect width="1200" height="800" fill="#f8fafc"/>
+  
+  <text x="600" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#1a365d">Methodologie de Travail - Cycle de Developpement</text>
+  <text x="600" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#4A5568">Approche Agile avec Sprints Iteratifs</text>
+  
+  <circle cx="600" cy="400" r="80" fill="#1a365d" filter="url(#shadow)"/>
+  <text x="600" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">Livraison</text>
+  <text x="600" y="415" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#A0AEC0">Continue</text>
+  
+  <g transform="translate(600, 150)">
+    <circle cx="0" cy="0" r="70" fill="url(#phase1Grad)" filter="url(#shadow)"/>
+    <text x="0" y="-15" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">1. ANALYSE</text>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Besoins et</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Specifications</text>
+  </g>
+  
+  <g transform="translate(850, 280)">
+    <circle cx="0" cy="0" r="70" fill="url(#phase2Grad)" filter="url(#shadow)"/>
+    <text x="0" y="-15" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">2. CONCEPTION</text>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Architecture et</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Design</text>
+  </g>
+  
+  <g transform="translate(850, 520)">
+    <circle cx="0" cy="0" r="70" fill="url(#phase3Grad)" filter="url(#shadow)"/>
+    <text x="0" y="-15" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">3. DEVELOP</text>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Codage et</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Integration</text>
+  </g>
+  
+  <g transform="translate(600, 650)">
+    <circle cx="0" cy="0" r="70" fill="url(#phase4Grad)" filter="url(#shadow)"/>
+    <text x="0" y="-15" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">4. TESTS</text>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Validation et</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Qualite</text>
+  </g>
+  
+  <g transform="translate(350, 520)">
+    <circle cx="0" cy="0" r="70" fill="url(#phase5Grad)" filter="url(#shadow)"/>
+    <text x="0" y="-15" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">5. DEPLOY</text>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Deploiement et</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Monitoring</text>
+  </g>
+  
+  <g transform="translate(350, 280)">
+    <circle cx="0" cy="0" r="70" fill="#718096" filter="url(#shadow)"/>
+    <text x="0" y="-15" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">6. FEEDBACK</text>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Retours et</text>
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Amelioration</text>
+  </g>
+  
+  <path d="M 660 180 Q 750 200 800 250" fill="none" stroke="#4A5568" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 870 350 Q 880 430 870 460" fill="none" stroke="#4A5568" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 800 560 Q 720 610 660 630" fill="none" stroke="#4A5568" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 540 630 Q 450 600 400 560" fill="none" stroke="#4A5568" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 340 450 Q 330 380 340 340" fill="none" stroke="#4A5568" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 400 240 Q 480 180 540 160" fill="none" stroke="#4A5568" stroke-width="3" marker-end="url(#arrow)"/>
+  
+  <line x1="560" y1="180" x2="560" y2="330" stroke="#A0AEC0" stroke-width="2" stroke-dasharray="5,5"/>
+  <line x1="780" y1="320" x2="670" y2="370" stroke="#A0AEC0" stroke-width="2" stroke-dasharray="5,5"/>
+  <line x1="780" y1="490" x2="670" y2="430" stroke="#A0AEC0" stroke-width="2" stroke-dasharray="5,5"/>
+  <line x1="560" y1="580" x2="560" y2="470" stroke="#A0AEC0" stroke-width="2" stroke-dasharray="5,5"/>
+  <line x1="420" y1="490" x2="530" y2="430" stroke="#A0AEC0" stroke-width="2" stroke-dasharray="5,5"/>
+  <line x1="420" y1="320" x2="530" y2="370" stroke="#A0AEC0" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <rect x="50" y="100" width="200" height="100" rx="8" fill="white" stroke="#667EEA" stroke-width="2" filter="url(#shadow)"/>
+  <text x="150" y="125" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#667EEA">Phase Analyse</text>
+  <text x="60" y="145" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Etude des besoins</text>
+  <text x="60" y="160" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- User Stories</text>
+  <text x="60" y="175" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Cas d utilisation</text>
+  <text x="60" y="190" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Planification Sprint</text>
+  
+  <rect x="950" y="180" width="200" height="100" rx="8" fill="white" stroke="#11998E" stroke-width="2" filter="url(#shadow)"/>
+  <text x="1050" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#11998E">Phase Conception</text>
+  <text x="960" y="225" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Architecture technique</text>
+  <text x="960" y="240" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Modelisation BDD</text>
+  <text x="960" y="255" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- API Design</text>
+  <text x="960" y="270" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Maquettes UI/UX</text>
+  
+  <rect x="950" y="500" width="200" height="100" rx="8" fill="white" stroke="#FC466B" stroke-width="2" filter="url(#shadow)"/>
+  <text x="1050" y="525" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FC466B">Phase Developpement</text>
+  <text x="960" y="545" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Developpement Backend</text>
+  <text x="960" y="560" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Developpement Frontend</text>
+  <text x="960" y="575" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Integration APIs</text>
+  <text x="960" y="590" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Code Review</text>
+  
+  <rect x="700" y="700" width="200" height="90" rx="8" fill="white" stroke="#F2994A" stroke-width="2" filter="url(#shadow)"/>
+  <text x="800" y="725" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#F2994A">Phase Tests</text>
+  <text x="710" y="745" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Tests unitaires</text>
+  <text x="710" y="760" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Tests d integration</text>
+  <text x="710" y="775" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Tests E2E</text>
+  
+  <rect x="50" y="500" width="200" height="100" rx="8" fill="white" stroke="#0575E6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="150" y="525" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#0575E6">Phase Deploiement</text>
+  <text x="60" y="545" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Build et Package</text>
+  <text x="60" y="560" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Deploiement services</text>
+  <text x="60" y="575" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Configuration</text>
+  <text x="60" y="590" font-family="Arial, sans-serif" font-size="10" fill="#4A5568">- Monitoring</text>
+  
+  <rect x="50" y="650" width="400" height="130" rx="10" fill="white" stroke="#CBD5E0" stroke-width="2" filter="url(#shadow)"/>
+  <text x="250" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a365d">Outils Utilises</text>
+  <line x1="70" y1="690" x2="430" y2="690" stroke="#E2E8F0" stroke-width="1"/>
+  
+  <text x="70" y="715" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4A5568">IDE:</text>
+  <text x="120" y="715" font-family="Arial, sans-serif" font-size="11" fill="#718096">IntelliJ IDEA, VS Code</text>
+  
+  <text x="70" y="735" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4A5568">Versioning:</text>
+  <text x="140" y="735" font-family="Arial, sans-serif" font-size="11" fill="#718096">Git, GitHub</text>
+  
+  <text x="70" y="755" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4A5568">Build:</text>
+  <text x="115" y="755" font-family="Arial, sans-serif" font-size="11" fill="#718096">Maven, npm</text>
+  
+  <text x="250" y="715" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4A5568">Testing:</text>
+  <text x="305" y="715" font-family="Arial, sans-serif" font-size="11" fill="#718096">JUnit, Postman</text>
+  
+  <text x="250" y="735" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4A5568">API:</text>
+  <text x="280" y="735" font-family="Arial, sans-serif" font-size="11" fill="#718096">Swagger, REST</text>
+  
+  <text x="250" y="755" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4A5568">DB:</text>
+  <text x="275" y="755" font-family="Arial, sans-serif" font-size="11" fill="#718096">H2, Oracle</text>
+  
+  <rect x="950" y="650" width="200" height="80" rx="10" fill="#EDF2F7" stroke="#A0AEC0" stroke-width="2"/>
+  <text x="1050" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a365d">Sprint</text>
+  <text x="1050" y="705" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#4A5568">Duree: 2 semaines</text>
+  <text x="1050" y="725" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#4A5568">Daily Stand-up: 15 min</text>
+</svg>

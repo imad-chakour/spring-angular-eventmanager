@@ -1,11 +1,16 @@
 <div class="user-list-container">
   <div class="header">
     <h1>Gestion des Utilisateurs</h1>
-    @if (canEdit()) {
-      <button class="btn btn-primary" routerLink="/users/new">
-        <span>+ Nouvel Utilisateur</span>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="refreshUsers()" [disabled]="isLoading()" title="Rafraîchir la liste">
+        <span>🔄 Rafraîchir</span>
       </button>
-    }
+      @if (canEdit()) {
+        <button class="btn btn-primary" routerLink="/users/new">
+          <span>+ Nouvel Utilisateur</span>
+        </button>
+      }
+    </div>
   </div>
 
   @if (errorMessage()) {

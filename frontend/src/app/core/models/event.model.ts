@@ -22,7 +22,7 @@ export enum EventStatus {
 
 export interface Event {
   id?: number;
-  eventId: string;
+  eventId?: string;  // Généré par le backend lors de la création
   title: string;
   description?: string;
   type: EventType;

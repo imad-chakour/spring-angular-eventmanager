@@ -1,15 +1,19 @@
 package com.example.event_service.controller;
 
+import com.example.event_service.dto.EventCreateRequest;
 import com.example.event_service.model.*;
 import com.example.event_service.service.EventService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -72,24 +76,108 @@ public class EventController {
     }
 
     @PostMapping
-    public Event createEvent(@RequestBody Event event) {
-        return eventService.saveEvent(event);
+    public ResponseEntity<?> createEvent(@RequestBody EventCreateRequest request) {
+        System.out.println("=== EventController.createEvent() appelé ===");
+        System.out.println("EventCreateRequest reçue:");
+        System.out.println("  - Title: " + request.getTitle());
+        System.out.println("  - Description: " + request.getDescription());
+        System.out.println("  - Type: " + request.getType());
+        System.out.println("  - Format: " + request.getFormat());
+        System.out.println("  - StartDate: " + request.getStartDate());
+        System.out.println("  - EndDate: " + request.getEndDate());
+        System.out.println("  - Location: " + request.getLocation());
+        System.out.println("  - MaxCapacity: " + request.getMaxCapacity());
+        System.out.println("  - Status: " + request.getStatus());
+        System.out.println("  - OrganizerId: " + request.getOrganizerId());
+        
+        try {
+            // Convertir le DTO en entité Event
+            Event event = new Event();
+            event.setTitle(request.getTitle());
+            event.setDescription(request.getDescription());
+            event.setType(request.getType());
+            event.setFormat(request.getFormat());
+            
+            // Parser les dates depuis les strings
+            LocalDateTime startDate = request.getStartDateAsLocalDateTime();
+            LocalDateTime endDate = request.getEndDateAsLocalDateTime();
+            
+            System.out.println("  - StartDate parsée: " + startDate);
+            System.out.println("  - EndDate parsée: " + endDate);
+            
+            event.setStartDate(startDate);
+            event.setEndDate(endDate);
+            event.setLocation(request.getLocation());
+            event.setMaxCapacity(request.getMaxCapacity());
+            event.setStatus(request.getStatus() != null ? request.getStatus() : EventStatus.PLANIFIED);
+            event.setOrganizerId(request.getOrganizerId());
+            event.setCurrentParticipants(0);
+            
+            Event saved = eventService.saveEvent(event);
+            System.out.println("✅ Event créé avec succès - ID: " + saved.getId() + ", EventId: " + saved.getEventId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        } catch (IllegalArgumentException e) {
+            System.err.println("❌ Erreur de validation: " + e.getMessage());
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Validation error");
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors de la création de l'événement:");
+            System.err.println("   Message: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Internal server error");
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
     @PutMapping("/{id}")
-    public Event updateEvent(@PathVariable("id") final Long id, @RequestBody Event event) {
+    public ResponseEntity<?> updateEvent(@PathVariable("id") final Long id, @RequestBody EventCreateRequest request) {
+        System.out.println("=== EventController.updateEvent() appelé ===");
+        System.out.println("Event ID: " + id);
+        
         return eventService.getEvent(id).map(existing -> {
-            existing.setTitle(event.getTitle());
-            existing.setDescription(event.getDescription());
-            existing.setType(event.getType());
-            existing.setFormat(event.getFormat());
-            existing.setStartDate(event.getStartDate());
-            existing.setEndDate(event.getEndDate());
-            existing.setLocation(event.getLocation());
-            existing.setMaxCapacity(event.getMaxCapacity());
-            existing.setStatus(event.getStatus());
-            return eventService.saveEvent(existing);
-        }).orElse(null);
+            System.out.println("Event existant trouvé - ID: " + existing.getId() + ", EventId: " + existing.getEventId());
+            
+            existing.setTitle(request.getTitle());
+            existing.setDescription(request.getDescription());
+            existing.setType(request.getType());
+            existing.setFormat(request.getFormat());
+            
+            // Parser les dates depuis les strings
+            if (request.getStartDate() != null) {
+                LocalDateTime startDate = request.getStartDateAsLocalDateTime();
+                System.out.println("  StartDate parsée: " + startDate);
+                existing.setStartDate(startDate);
+            }
+            if (request.getEndDate() != null) {
+                LocalDateTime endDate = request.getEndDateAsLocalDateTime();
+                System.out.println("  EndDate parsée: " + endDate);
+                existing.setEndDate(endDate);
+            }
+            
+            existing.setLocation(request.getLocation());
+            existing.setMaxCapacity(request.getMaxCapacity());
+            if (request.getStatus() != null) {
+                existing.setStatus(request.getStatus());
+            }
+            
+            try {
+                Event saved = eventService.saveEvent(existing);
+                System.out.println("✅ Event mis à jour avec succès - ID: " + saved.getId());
+                return ResponseEntity.ok(saved);
+            } catch (Exception e) {
+                System.err.println("❌ Erreur lors de la mise à jour de l'événement:");
+                System.err.println("   Message: " + e.getMessage());
+                e.printStackTrace();
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Internal server error");
+                error.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+            }
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{id}/close")
@@ -98,8 +186,29 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEvent(@PathVariable("id") final Long id) {
-        eventService.deleteEvent(id);
+    public ResponseEntity<?> deleteEvent(@PathVariable("id") final Long id) {
+        System.out.println("=== EventController.deleteEvent() appelé ===");
+        System.out.println("Event ID à supprimer: " + id);
+        
+        try {
+            eventService.deleteEvent(id);
+            System.out.println("✅ Event supprimé définitivement avec succès - ID: " + id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            System.err.println("❌ Erreur de validation: " + e.getMessage());
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Not found");
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors de la suppression de l'événement:");
+            System.err.println("   Message: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Internal server error");
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
     // Registration endpoints

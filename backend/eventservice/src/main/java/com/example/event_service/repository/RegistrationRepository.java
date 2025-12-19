@@ -12,4 +12,7 @@ public interface RegistrationRepository extends CrudRepository<Registration, Lon
     List<Registration> findByEventId(Long eventId);
     List<Registration> findByUserId(Long userId);  // Changed from findByParticipantId
     Optional<Registration> findByEventIdAndUserId(Long eventId, Long userId);  // Changed from findByEventIdAndParticipantId
+    
+    // Supprimer toutes les inscriptions d'un événement
+    void deleteByEventId(Long eventId);
 }

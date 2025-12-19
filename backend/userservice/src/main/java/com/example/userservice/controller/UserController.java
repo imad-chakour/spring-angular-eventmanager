@@ -23,13 +23,26 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
+        System.out.println("=== UserController.getUsers() appelé ===");
+        System.out.println("=== Timestamp: " + System.currentTimeMillis() + " ===");
+        
         Iterable<User> usersIterable = userService.getUsers();
         // Convert Iterable to List for proper JSON serialization
         List<User> users = new java.util.ArrayList<>();
         usersIterable.forEach(users::add);
-        // Remove passwords from response
-        users.forEach(user -> user.setPassword(null));
-        return ResponseEntity.ok(users);
+        
+        System.out.println("=== Nombre d'utilisateurs dans la réponse: " + users.size() + " ===");
+        users.forEach(user -> {
+            System.out.println("  - User ID: " + user.getId() + ", Email: " + user.getEmail() + ", Role: " + user.getRole());
+            user.setPassword(null);
+        });
+        
+        // Désactiver le cache HTTP pour forcer le rafraîchissement
+        return ResponseEntity.ok()
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .header("Pragma", "no-cache")
+                .header("Expires", "0")
+                .body(users);
     }
 
     @GetMapping("/{id}")

@@ -25,7 +25,7 @@ export class AuthService {
         this.isAuthenticated.set(true);
         // Récupérer les informations utilisateur
         this.loadUserInfo(response.email);
-        this.router.navigate(['/campaigns']);
+        this.router.navigate(['/']);
       }),
       catchError((error) => {
         this.isAuthenticated.set(false);

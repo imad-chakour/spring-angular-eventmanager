@@ -40,12 +40,29 @@ export class EventService {
     return this.http.get<Event[]>(`${this.apiUrl}/status/${status}`);
   }
 
-  createEvent(event: Event): Observable<Event> {
-    return this.http.post<Event>(this.apiUrl, event);
+  createEvent(event: Partial<Event>): Observable<Event> {
+    console.log('=== EventService: createEvent ===');
+    console.log('Event data:', event);
+    return this.http.post<Event>(this.apiUrl, event).pipe(
+      catchError((error) => {
+        console.error('=== EventService: Error creating event ===');
+        console.error('Error details:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  updateEvent(id: number, event: Event): Observable<Event> {
-    return this.http.put<Event>(`${this.apiUrl}/${id}`, event);
+  updateEvent(id: number, event: Partial<Event>): Observable<Event> {
+    console.log('=== EventService: updateEvent ===');
+    console.log('Event ID:', id);
+    console.log('Event data:', event);
+    return this.http.put<Event>(`${this.apiUrl}/${id}`, event).pipe(
+      catchError((error) => {
+        console.error('=== EventService: Error updating event ===');
+        console.error('Error details:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   closeEvent(id: number): Observable<Event> {
